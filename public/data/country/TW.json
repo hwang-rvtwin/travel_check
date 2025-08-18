@@ -1,14 +1,14 @@
 {
-  "iso2": "JP",
-  "nameKo": "일본",
-  "nameEn": "Japan",
+  "iso2": "TW",
+  "nameKo": "대만",
+  "nameEn": "Taiwan",
   "power": {
     "plug": [
       "A",
       "B"
     ],
-    "voltage": "100V",
-    "frequency": "50/60Hz",
+    "voltage": "110V",
+    "frequency": "60Hz",
     "source": "WorldStandards (recheck required)"
   },
   "visa": {

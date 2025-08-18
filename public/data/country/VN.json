@@ -1,14 +1,14 @@
 {
-  "iso2": "JP",
-  "nameKo": "일본",
-  "nameEn": "Japan",
+  "iso2": "VN",
+  "nameKo": "베트남",
+  "nameEn": "Viet Nam",
   "power": {
     "plug": [
       "A",
-      "B"
+      "C"
     ],
-    "voltage": "100V",
-    "frequency": "50/60Hz",
+    "voltage": "220V",
+    "frequency": "50Hz",
     "source": "WorldStandards (recheck required)"
   },
   "visa": {

@@ -1,14 +1,14 @@
 {
-  "iso2": "JP",
-  "nameKo": "일본",
-  "nameEn": "Japan",
+  "iso2": "US",
+  "nameKo": "미국",
+  "nameEn": "United States",
   "power": {
     "plug": [
       "A",
       "B"
     ],
-    "voltage": "100V",
-    "frequency": "50/60Hz",
+    "voltage": "120V",
+    "frequency": "60Hz",
     "source": "WorldStandards (recheck required)"
   },
   "visa": {

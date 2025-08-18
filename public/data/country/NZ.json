@@ -1,14 +1,13 @@
 {
-  "iso2": "JP",
-  "nameKo": "일본",
-  "nameEn": "Japan",
+  "iso2": "NZ",
+  "nameKo": "뉴질랜드",
+  "nameEn": "New Zealand",
   "power": {
     "plug": [
-      "A",
-      "B"
+      "I"
     ],
-    "voltage": "100V",
-    "frequency": "50/60Hz",
+    "voltage": "230V",
+    "frequency": "50Hz",
     "source": "WorldStandards (recheck required)"
   },
   "visa": {

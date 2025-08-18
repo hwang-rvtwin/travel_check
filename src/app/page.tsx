@@ -197,6 +197,19 @@ export default function Home() {
           </section>
         </>
       )}
+      {/* 신뢰/면책 푸터 */}
+      <footer className="mt-10 rounded-2xl border p-4 text-sm leading-6 opacity-90">
+        <div className="font-semibold">신뢰 및 면책 고지</div>
+        <ul className="list-disc pl-5">
+          <li>본 서비스의 정보는 <b>참고용 요약</b>이며, 최종 규정은 <b>항공사·출입국·대사관·정부 공식 공지</b>를 따릅니다.</li>
+          <li>비자/입국 규정은 수시로 변경될 수 있습니다. 반드시 <a className="text-blue-600 underline" target="_blank" href="https://www.iata.org/en/services/compliance/timatic/travel-documentation/">IATA Travel Centre</a>와 각국 정부/대사관 공지에서 <b>최신 정보</b>를 확인하세요.</li>
+          <li>전압·플러그 정보는 지역/시설에 따라 예외가 있을 수 있습니다. 숙소 공지 및 현지 안내를 함께 확인하세요.</li>
+          <li>수하물 규정은 항공사/운임 유형/회원 등급에 따라 달라질 수 있으니 <b>항공사 공식 페이지</b>를 확인하세요.</li>
+        </ul>
+        <div className="mt-2 text-xs opacity-70">
+          데이터 출처 예시: IATA Travel Centre / 각국 정부·대사관 / 항공사 공식 페이지 / WorldStandards 등.
+        </div>
+      </footer>
     </main>
   );
 }
