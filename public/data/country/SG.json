@@ -1,0 +1,18 @@
+{
+  "iso2": "SG",
+  "nameKo": "싱가포르",
+  "nameEn": "Singapore",
+  "power": { "plug": ["G"], "voltage": "230V", "frequency": "50Hz", "source": "WorldStandards" },
+  "visa": {
+    "summary": "입국·비자 최신 규정은 IATA Travel Centre 또는 싱가포르 이민국 공지에서 확인하세요.",
+    "sources": [
+      { "title": "IATA Travel Centre", "url": "https://www.iata.org/en/services/compliance/timatic/travel-documentation/" }
+    ]
+  },
+  "baggage": {
+    "links": [
+      { "code": "SQ", "title": "싱가포르항공 수하물", "url": "https://www.singaporeair.com/" }
+    ]
+  },
+  "updatedAt": "2025-08-18T12:00:00+09:00"
+}

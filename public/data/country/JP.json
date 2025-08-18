@@ -1,0 +1,20 @@
+{
+  "iso2": "JP",
+  "nameKo": "일본",
+  "nameEn": "Japan",
+  "power": { "plug": ["A", "B"], "voltage": "100V", "frequency": "50/60Hz", "source": "WorldStandards" },
+  "visa": {
+    "summary": "한국 여권 단기 관광에 대한 최신 규정은 IATA Travel Centre 또는 일본 대사관 공지를 확인하세요.",
+    "sources": [
+      { "title": "IATA Travel Centre", "url": "https://www.iata.org/en/services/compliance/timatic/travel-documentation/" },
+      { "title": "주한일본대사관(또는 일본 외무성)", "url": "https://www.mofa.go.jp/" }
+    ]
+  },
+  "baggage": {
+    "links": [
+      { "code": "KE", "title": "대한항공 수하물", "url": "https://www.koreanair.com/" },
+      { "code": "JL", "title": "일본항공 수하물", "url": "https://www.jal.co.jp/" }
+    ]
+  },
+  "updatedAt": "2025-08-18T12:00:00+09:00"
+}

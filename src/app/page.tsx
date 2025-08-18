@@ -1,103 +1,202 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
+
+type VisaInfo = { summary: string; sources: { title: string; url: string }[] };
+type ESIMDeal = { name: string; go: string };
+type PowerInfo = { plugTypes: string[]; voltage: string; frequency: string; source: string };
+type BaggageInfo = { guide: string; airlineLinks: { code: string; title: string; url: string }[] };
+type ChecklistItem = { id: string; label: string; checked: boolean };
+
+type ApiResponse = {
+  country: string;
+  passport: string;
+  from: string; to: string;
+  visa: VisaInfo;
+  esim: { deals: ESIMDeal[] };
+  power: PowerInfo;
+  baggage: BaggageInfo;
+  checklist: ChecklistItem[];
+  updatedAt?: string | null;
+};
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [country, setCountry] = useState('JP');     // 목적지
+  const [passport, setPassport] = useState('KR');   // 여권국가
+  const [from, setFrom] = useState('');             // yyyy-mm-dd
+  const [to, setTo] = useState('');
+  const [data, setData] = useState<ApiResponse | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // 체크리스트 로컬 저장 키 (국가+여권+기간)
+  const storageKey = useMemo(
+    () => `tc_checklist_${country}_${passport}_${from}_${to}`,
+    [country, passport, from, to]
+  );
+
+  // API 호출
+  async function fetchData() {
+    const params = new URLSearchParams({ country, passport, from, to });
+    const res = await fetch(`/api/check?${params.toString()}`);
+    if (!res.ok) { alert('알 수 없는 국가 코드입니다. (예: JP, SG)'); return; }
+    const json = (await res.json()) as ApiResponse;
+
+    // localStorage에 저장된 체크 상태가 있으면 덮어쓰기
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const savedMap = new Map<string, boolean>(JSON.parse(saved));
+        json.checklist = json.checklist.map(item => ({
+          ...item, checked: savedMap.get(item.id) ?? item.checked
+        }));
+      }
+    } catch {}
+
+    setData(json);
+  }
+
+  // 체크 상태 변경 + 저장
+  function toggleCheck(id: string) {
+    if (!data) return;
+    const next = {
+      ...data,
+      checklist: data.checklist.map(it => it.id === id ? { ...it, checked: !it.checked } : it)
+    };
+    setData(next);
+    // 저장 (id → checked 맵)
+    const mapArr: [string, boolean][] = next.checklist.map(it => [it.id, it.checked]);
+    localStorage.setItem(storageKey, JSON.stringify(mapArr));
+  }
+
+  // 링크 복사
+  async function copyLink() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('country', country);
+    url.searchParams.set('passport', passport);
+    if (from) url.searchParams.set('from', from);
+    if (to) url.searchParams.set('to', to);
+    await navigator.clipboard.writeText(url.toString());
+    alert('링크를 복사했어요!');
+  }
+
+  // 인쇄(PDF 저장)
+  function printPage() {
+    window.print();
+  }
+
+  // 페이지 처음 열릴 때 URL 쿼리 복원
+  useEffect(() => {
+    const u = new URL(window.location.href);
+    setCountry((u.searchParams.get('country') || 'JP').toUpperCase());
+    setPassport((u.searchParams.get('passport') || 'KR').toUpperCase());
+    setFrom(u.searchParams.get('from') || '');
+    setTo(u.searchParams.get('to') || '');
+  }, []);
+
+  return (
+    <main className="mx-auto max-w-4xl p-4">
+      <header className="flex items-center justify-between py-2">
+        <h1 className="text-xl font-bold">출국 체크허브 ✈️</h1>
+        <div className="text-xs opacity-70">※ 본 요약은 참고용이며, 최종 규정은 항공사·출입국·대사관 공지를 따릅니다.</div>
+      </header>
+
+      {/* 검색 바 */}
+      <section className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-5">
+        <div className="sm:col-span-1">
+          <label className="text-sm">목적지(ISO2)</label>
+          <input value={country} onChange={e=>setCountry(e.target.value.toUpperCase())}
+            placeholder="JP" className="w-full rounded border p-2"/>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        <div className="sm:col-span-1">
+          <label className="text-sm">여권국가</label>
+          <input value={passport} onChange={e=>setPassport(e.target.value.toUpperCase())}
+            placeholder="KR" className="w-full rounded border p-2"/>
+        </div>
+        <div className="sm:col-span-1">
+          <label className="text-sm">출국일</label>
+          <input type="date" value={from} onChange={e=>setFrom(e.target.value)} className="w-full rounded border p-2"/>
+        </div>
+        <div className="sm:col-span-1">
+          <label className="text-sm">귀국일</label>
+          <input type="date" value={to} onChange={e=>setTo(e.target.value)} className="w-full rounded border p-2"/>
+        </div>
+        <div className="sm:col-span-1 flex items-end">
+          <button onClick={fetchData} className="w-full rounded bg-black px-3 py-2 text-white">조회</button>
+        </div>
+      </section>
+
+      {/* 결과 */}
+      {data && (
+        <>
+          <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {/* 입국/비자 */}
+            <article className="rounded-2xl border p-4 shadow-sm">
+              <h2 className="mb-2 text-lg font-semibold">입국 / 비자</h2>
+              <p className="text-sm leading-relaxed">{data.visa.summary}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {data.visa.sources?.map((s, i) => (
+                  <a key={i} className="text-sm text-blue-600 underline" href={s.url} target="_blank">{s.title}</a>
+                ))}
+              </div>
+            </article>
+
+            {/* eSIM */}
+            <article className="rounded-2xl border p-4 shadow-sm">
+              <h2 className="mb-2 text-lg font-semibold">eSIM</h2>
+              <ul className="list-disc pl-5">
+                {data.esim.deals.map((d, i) => (
+                  <li key={i} className="text-sm">
+                    <a className="text-blue-600 underline" href={d.go}>{d.name}</a>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-xs opacity-70">eSIM 제휴 링크가 사용될 수 있어요.</p>
+            </article>
+
+            {/* 전압/플러그 */}
+            <article className="rounded-2xl border p-4 shadow-sm">
+              <h2 className="mb-2 text-lg font-semibold">전압 / 플러그</h2>
+              <p className="text-sm">플러그 타입: <b>{data.power.plugTypes.join(', ')}</b></p>
+              <p className="text-sm">전압/주파수: <b>{data.power.voltage}</b>, <b>{data.power.frequency}</b></p>
+              <a className="mt-2 inline-block text-sm text-blue-600 underline" href="https://www.worldstandards.eu/electricity/plug-voltage-by-country/" target="_blank">
+                출처: WorldStandards
+              </a>
+            </article>
+
+            {/* 수하물 */}
+            <article className="rounded-2xl border p-4 shadow-sm">
+              <h2 className="mb-2 text-lg font-semibold">수하물</h2>
+              <p className="text-sm leading-relaxed">{data.baggage.guide}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {data.baggage.airlineLinks?.map((a, i) => (
+                  <a key={i} className="text-sm text-blue-600 underline" href={a.url} target="_blank">
+                    {a.title}
+                  </a>
+                ))}
+              </div>
+            </article>
+          </section>
+
+          {/* 체크리스트 */}
+          <section className="mt-6 rounded-2xl border p-4 shadow-sm">
+            <div className="mb-2 flex items-center justify-between">
+              <h2 className="text-lg font-semibold">체크리스트</h2>
+              <div className="flex gap-2">
+                <button onClick={copyLink} className="rounded border px-3 py-1 text-sm">링크 복사</button>
+                <button onClick={printPage} className="rounded border px-3 py-1 text-sm">인쇄 / PDF</button>
+              </div>
+            </div>
+            <ul className="space-y-2">
+              {data.checklist.map((c) => (
+                <li key={c.id} className="flex items-center gap-3">
+                  <input id={c.id} type="checkbox" checked={c.checked} onChange={()=>toggleCheck(c.id)} />
+                  <label htmlFor={c.id} className="text-sm">{c.label}</label>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-xs opacity-70">업데이트: {data.updatedAt || '—'}</p>
+          </section>
+        </>
+      )}
+    </main>
   );
 }
