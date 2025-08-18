@@ -1,5 +1,5 @@
 // src/app/api/weather/route.ts
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 function fmt(d: string) { return d.split("T")[0]; }
 

@@ -140,8 +140,8 @@ export default function Home() {
   // 최초 진입 시 URL 쿼리 → 상태 복원
   useEffect(() => {
     const u = new URL(window.location.href);
-    const qCountry = (u.searchParams.get('country') || country).toUpperCase();
-    const qPassport = (u.searchParams.get('passport') || passport).toUpperCase();
+    const qCountry = (u.searchParams.get('country') || 'JP').toUpperCase(); // 초기값 리터럴
+    const qPassport = (u.searchParams.get('passport') || 'KR').toUpperCase(); // 초기값 리터럴
     const qFrom = u.searchParams.get('from') || '';
     const qTo = u.searchParams.get('to') || '';
     const qCity = u.searchParams.get('city') || '';
@@ -158,6 +158,7 @@ export default function Home() {
     setPassport(qPassport);
     setFrom(qFrom);
     setTo(qTo);
+    // 의존성 배열은 비워둬도 이제 경고가 없습니다.
   }, []);
 
   return (
