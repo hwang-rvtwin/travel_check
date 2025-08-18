@@ -53,8 +53,8 @@ SEED.forEach(c => {
     },
     baggage: {
       links: [
-        { code:"KE", title:"대한항공 수하물", url:"https://www.koreanair.com/" },
-        { code:"OZ", title:"아시아나항공 수하물", url:"https://flyasiana.com/" }
+        { code:"KE", title:"대한항공 수하물", url:"https://www.koreanair.com/contents/plan-your-travel/baggage" },
+        { code:"OZ", title:"아시아나항공 수하물", url:"https://flyasiana.com/C/KR/KO/contents/user-guide" }
       ]
     },
     updatedAt: nowKST

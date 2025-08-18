@@ -4,6 +4,7 @@ export const runtime = 'nodejs'; // 파일 읽기 위해 Node 런타임 사용
 import { NextRequest } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
+import visaSnapRaw from "../../../../public/data/visa_snapshot.json" assert { type: "json" };
 
 type ChecklistItem = { id: string; label: string; checked: boolean };
 
@@ -31,6 +32,11 @@ export async function GET(req: NextRequest) {
     const filePath = path.join(process.cwd(), 'public', 'data', 'country', `${country}.json`);
     const raw = await fs.readFile(filePath, 'utf-8');
     const meta = JSON.parse(raw);
+    const key = `${passport}-${country}`;
+    const snap = (visaSnapRaw as any)[key];
+    const visa = snap
+      ? { summary: snap.summary, sources: snap.sources, updatedAt: snap.updatedAt }
+      : meta.visa; // 스냅샷 없으면 기존 링크/요약 유지
 
     // eSIM 제휴 링크(나중에 본인 링크로 교체)
     const esim = {
@@ -46,7 +52,7 @@ export async function GET(req: NextRequest) {
           country,
           passport,
           from, to,
-          visa: meta.visa,
+          visa: visa,
           power: {
             plugTypes: meta.power.plug,
             voltage: meta.power.voltage,
