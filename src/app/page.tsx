@@ -98,6 +98,8 @@ export default function Home() {
     [country, passport, from, to, city?.iata]
   );
 
+  const withinForecastWindow = useMemo(() => !!from && daysAhead(from) <= 16, [from]);
+
   /* ---------- 데이터 가져오기 ---------- */
 
   // 예보 API 호출 (서버 라우트 사용)
@@ -147,57 +149,31 @@ export default function Home() {
     if (!city) { setClimate(null); setClimateNote(null); return; }
 
     try {
-      const u = new URL('https://archive-api.open-meteo.com/v1/archive');
-      u.searchParams.set('latitude', String(city.lat));
-      u.searchParams.set('longitude', String(city.lon));
-      u.searchParams.set('start_date', '1991-01-01');
-      u.searchParams.set('end_date', '2020-12-31');
-      // u.searchParams.set('models', 'ERA5'); // ❌ 400의 원인 → 제거
-      u.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min');
-      u.searchParams.set('timezone', 'auto');
+      const p = new URLSearchParams({
+        lat: String(city.lat),
+        lon: String(city.lon),
+        precision: '2' // 좌표 반올림 자릿수(캐시 적중률↑)
+      });
+      const r = await fetch(`/api/climate?${p.toString()}`);
+      const j = await r.json();
 
-      const r = await fetch(u.toString());
-      const j = await r.json().catch(() => null);
-
-      if (!r.ok) {
-        const reason = (j && (j.reason || j.error)) ? ` (${j.reason || j.error})` : '';
-        setClimate(null);
-        setClimateNote('기후 평균 데이터를 불러오지 못했어요.' + reason);
+      if (!r.ok || !j?.monthly) {
+        if (j?.note) {
+          setClimate(null);
+          setClimateNote('기후 평균 데이터를 불러오지 못했어요.');
+        } else {
+          setClimate(null);
+          setClimateNote('기후 평균 데이터를 불러오지 못했어요.');
+        }
         return;
       }
 
-      const d = j?.daily as
-        | { time: string[]; temperature_2m_max: number[]; temperature_2m_min: number[] }
-        | undefined;
-
-      if (!d || !Array.isArray(d.time) || d.time.length === 0) {
-        setClimate(null);
-        setClimateNote('해당 지역의 월별 기후 평균을 찾지 못했어요.');
-        return;
-      }
-
-      // 12개월 누적 → 평균
-      const sumMax = new Array(12).fill(0);
-      const sumMin = new Array(12).fill(0);
-      const cnt = new Array(12).fill(0);
-
-      for (let i = 0; i < d.time.length; i++) {
-        const t = d.time[i];
-        const m = new Date(t).getMonth(); // 0~11
-        const tmax = d.temperature_2m_max[i];
-        const tmin = d.temperature_2m_min[i];
-        if (Number.isFinite(tmax)) sumMax[m] += tmax;
-        if (Number.isFinite(tmin)) sumMin[m] += tmin;
-        cnt[m] += 1;
-      }
-
-      const avgMax = sumMax.map((s, i) => (cnt[i] ? s / cnt[i] : NaN));
-      const avgMin = sumMin.map((s, i) => (cnt[i] ? s / cnt[i] : NaN));
+      const monthly = j.monthly as { time: string[]; tmax: number[]; tmin: number[] };
 
       setClimate({
-        time: Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')),
-        temperature_2m_max: avgMax,
-        temperature_2m_min: avgMin,
+        time: monthly.time,
+        temperature_2m_max: monthly.tmax,
+        temperature_2m_min: monthly.tmin
       });
       setClimateNote(null);
     } catch {
@@ -446,7 +422,7 @@ export default function Home() {
           <p className="mt-2 text-xs opacity-70">※ Open-Meteo 일별 예보(출발 약 14~16일 전부터 제공)</p>
         </article>
       )}
-      {weatherNote && (
+      {withinForecastWindow && !weather && !climate && weatherNote && (
         <div className="mt-2 text-xs opacity-70">※ {weatherNote}</div>
       )}
 
