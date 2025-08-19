@@ -555,15 +555,15 @@ export default function Home() {
             </article>
 
             {/* 전압/플러그 */}
-            <article className="rounded-2xl border p-4 shadow-sm">
+            <article className="rounded-2xl border p-4 shadow-sm sm:col-span-2">
               <h2 className="mb-2 text-lg font-semibold">전압 / 플러그</h2>
 
               {/* 가로 스크롤 스트립 + 스냅 */}
               <div className="-mx-2 overflow-x-auto snap-x snap-mandatory">
                 <div className="flex gap-3 px-2">
                   {(data.power.plugTypes || []).map((t, i) => (
-                    <div key={`${t}-${i}`} className="shrink-0 snap-start w-[220px]">
-                      <PlugPhotos type={t} size={96} />
+                    <div key={`${t}-${i}`} className="shrink-0 snap-start w-[268px]">
+                      <PlugPhotos type={t} size={80} />
                     </div>
                   ))}
                 </div>
