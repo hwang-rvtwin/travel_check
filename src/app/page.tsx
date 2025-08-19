@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { COUNTRIES, type Country, type City } from '@/data/geo';
 import PlugPhotos from '@/components/PlugPhotos';
+import { CURRENCY_BY_ISO2 } from '@/data/currency';
+
 
 /* ---------- 타입 ---------- */
 type VisaInfo = { summary: string; sources?: { title: string; url: string }[]; updatedAt?: string | null };
@@ -36,6 +38,11 @@ type ClimateMonthly = {
   temperature_2m_max: number[]; // 월평균 최고
   temperature_2m_min: number[]; // 월평균 최저
 };
+
+type FxState = {
+  base: string; quote: string; rate: number; inverse: number;
+  updated: string; source: string;
+} | null;
 
 /* ---------- 유틸 ---------- */
 function daysAhead(dateStr: string) {
@@ -115,8 +122,14 @@ export default function Home() {
       hour: '2-digit', minute: '2-digit', hour12: false
     }).format(d);
   }
-  const withinForecastWindow = useMemo(() => !!from && daysAhead(from) <= 16, [from]);
+  const withinForecastWindow = useMemo(() => !!from && daysAhead(from) <= 16, [from]);  
 
+  const [fx, setFx] = useState<FxState>(null);
+  const [fxNote, setFxNote] = useState<string | null>(null);
+
+  function fmtMoney(n: number, code: string) {
+    return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: code }).format(n);
+  }
   /* ---------- 데이터 가져오기 ---------- */
 
   // 예보 API 호출 (서버 라우트 사용)
@@ -231,6 +244,8 @@ export default function Home() {
 
       await fetchTimezoneAndComputeDiff();
 
+      await fetchFx();
+
       // 4) 쿼리 동기화
       syncQueryToUrl();
     } catch (e: unknown) {
@@ -263,6 +278,28 @@ export default function Home() {
       }
     } catch {
       setTzName(null);
+    }
+  }
+
+  async function fetchFx() {
+    if (!country) { setFx(null); setFxNote(null); return; }
+    const c = CURRENCY_BY_ISO2[country];
+    if (!c) { setFx(null); setFxNote('지원되지 않는 통화입니다.'); return; }
+
+    try {
+      const p = new URLSearchParams({ base: 'KRW', quote: c.code });
+      const r = await fetch(`/api/fx?${p.toString()}`);
+      const j = await r.json();
+      if (r.ok && j?.rate) {
+        setFx(j as FxState);
+        setFxNote(null);
+      } else {
+        setFx(null);
+        setFxNote('환율 정보를 불러올 수 없어요.');
+      }
+    } catch {
+      setFx(null);
+      setFxNote('환율 정보를 불러올 수 없어요.');
     }
   }
 
@@ -488,7 +525,20 @@ export default function Home() {
               {data.visa.updatedAt && (
                 <p className="mt-2 text-xs opacity-70">업데이트(비자 스냅샷): {data.visa.updatedAt}</p>
               )}
-            </article>                        
+            </article>
+
+            {/* 수하물 */}
+            <article className="rounded-2xl border p-4 shadow-sm">
+              <h2 className="mb-2 text-lg font-semibold">수하물</h2>
+              <p className="text-sm leading-relaxed">{data.baggage.guide}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {data.baggage.airlineLinks?.map((a, i) => (
+                  <a key={i} className="text-sm text-blue-600 underline" href={a.url} target="_blank" rel="noreferrer">
+                    {a.title}
+                  </a>
+                ))}
+              </div>
+            </article>
 
             {/* 시차 */}
             <article className="rounded-2xl border p-4 shadow-sm">
@@ -528,18 +578,37 @@ export default function Home() {
               )}
             </article>
 
-            {/* 수하물 */}
+            {/* 환율 (풀폭) */}
             <article className="rounded-2xl border p-4 shadow-sm">
-              <h2 className="mb-2 text-lg font-semibold">수하물</h2>
-              <p className="text-sm leading-relaxed">{data.baggage.guide}</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {data.baggage.airlineLinks?.map((a, i) => (
-                  <a key={i} className="text-sm text-blue-600 underline" href={a.url} target="_blank" rel="noreferrer">
-                    {a.title}
-                  </a>
-                ))}
-              </div>
-            </article>
+              <h2 className="mb-2 text-lg font-semibold">환율</h2>
+              {(() => {
+                const cur = country ? CURRENCY_BY_ISO2[country] : null;
+                if (!cur) return <div className="text-sm opacity-70">해당 국가의 통화를 찾지 못했어요.</div>;
+                if (!fx) return <div className="text-sm opacity-70">{fxNote ?? '결과를 조회하면 환율이 표시됩니다.'}</div>;
+
+                // 샘플: 100,000 KRW → 현지통화 / 100 현지통화 → KRW
+                const sampleKrw = 100_000;
+                const toLocal = sampleKrw * fx.rate;
+                const sampleLocal = 100;
+                const toKrw = sampleLocal * fx.inverse;
+
+                return (
+                  <div className="text-sm space-y-1">
+                    <div>
+                      기준 통화: <b>KRW</b> → 현지 통화: <b>{cur.code} ({cur.nameKr})</b>
+                    </div>
+                    <div>환율: <b>1 KRW ≈ {toLocal / sampleKrw < 0.01 ? (fx.rate).toFixed(6) : (fx.rate).toFixed(4)} {cur.code}</b></div>
+                    <div className="flex flex-wrap gap-4">
+                      <span>예시: <b>{fmtMoney(sampleKrw, 'KRW')}</b> ≈ <b>{fmtMoney(toLocal, cur.code)}</b></span>
+                      <span>예시: <b>{fmtMoney(sampleLocal, cur.code)}</b> ≈ <b>{fmtMoney(toKrw, 'KRW')}</b></span>
+                    </div>
+                    <div className="text-xs opacity-70">
+                      업데이트: {fx.updated} · 출처: {fx.source}
+                    </div>
+                  </div>
+                );
+              })()}
+            </article>            
 
             {/* eSIM */}
             <article className="rounded-2xl border p-4 shadow-sm">
@@ -552,7 +621,7 @@ export default function Home() {
                 ))}
               </ul>
               <p className="mt-2 text-xs opacity-70">일부 링크는 제휴 링크일 수 있어요.</p>
-            </article>
+            </article>            
 
             {/* 전압/플러그 */}
             <article className="rounded-2xl border p-4 shadow-sm sm:col-span-2">
