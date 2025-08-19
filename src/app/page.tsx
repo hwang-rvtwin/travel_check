@@ -506,14 +506,13 @@ export default function Home() {
             {/* 전압/플러그 */}
             <article className="rounded-2xl border p-4 shadow-sm">
               <h2 className="mb-2 text-lg font-semibold">전압 / 플러그</h2>
-              {/* auto-fit 그리드: 플러그 타입 개수/화면폭에 맞춰 자연스럽게 줄맞춤 */}
-                <div
-                  className="mb-2 grid gap-3"
-                  style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))' }}
-                >
-                  {(data.power.plugTypes || []).map((t) => (
+              {/* auto-fit: 타입 개수·화면폭에 따라 칼럼이 자동으로 늘고 줄어듭니다 */}
+               <div className="mb-2 grid gap-3 grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
+                {(data.power.plugTypes || []).map((t) => (                  
+                  <div className="min-w-[140px]">
                     <PlugPhotos key={t} type={t} size={84} />
-                  ))}
+                  </div>
+                ))}
                 </div>
               <p className="text-sm">전압/주파수: <b>{data.power.voltage}</b>, <b>{data.power.frequency}</b></p>
               <a

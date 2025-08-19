@@ -1,13 +1,13 @@
 {
-  "iso2": "KR",
-  "nameKo": "대한민국",
-  "nameEn": "South Korea",
+  "iso2": "MP",
+  "nameKo": "사이판(미국령)",
+  "nameEn": "Northern Mariana Islands",
   "power": {
     "plug": [
-      "C",
-      "F"
+      "A",
+      "B"
     ],
-    "voltage": "220V",
+    "voltage": "110V",
     "frequency": "60Hz",
     "source": "WorldStandards (recheck required)"
   },

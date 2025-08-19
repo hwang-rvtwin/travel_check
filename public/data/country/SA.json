@@ -1,13 +1,12 @@
 {
-  "iso2": "KR",
-  "nameKo": "대한민국",
-  "nameEn": "South Korea",
+  "iso2": "SA",
+  "nameKo": "사우디아라비아",
+  "nameEn": "Saudi Arabia",
   "power": {
     "plug": [
-      "C",
-      "F"
+      "G"
     ],
-    "voltage": "220V",
+    "voltage": "230V",
     "frequency": "60Hz",
     "source": "WorldStandards (recheck required)"
   },

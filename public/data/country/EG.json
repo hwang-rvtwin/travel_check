@@ -1,14 +1,14 @@
 {
-  "iso2": "KR",
-  "nameKo": "대한민국",
-  "nameEn": "South Korea",
+  "iso2": "EG",
+  "nameKo": "이집트",
+  "nameEn": "Egypt",
   "power": {
     "plug": [
       "C",
       "F"
     ],
     "voltage": "220V",
-    "frequency": "60Hz",
+    "frequency": "50Hz",
     "source": "WorldStandards (recheck required)"
   },
   "visa": {

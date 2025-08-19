@@ -32,7 +32,7 @@ export default function PlugPhotos({ type, size = 80, stacked = false, showLabel
   const layout = stacked ? 'flex-col' : 'flex-row';
 
   return (
-    <figure className={`flex ${layout} items-center gap-3 rounded-lg border p-2 bg-white`}>
+    <figure className={`w-full flex ${layout} items-center justify-center gap-3 rounded-lg border p-2 bg-white`}>
       <img
         src={cand3D[0]}
         alt={`${title} plug (3D)`}
