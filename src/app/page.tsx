@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { COUNTRIES, type Country, type City } from '@/data/geo';
-import PlugIcon from '@/components/PlugIcon';
+import PlugPhotos from '@/components/PlugPhotos';
 
 /* ---------- 타입 ---------- */
 type VisaInfo = { summary: string; sources?: { title: string; url: string }[]; updatedAt?: string | null };
@@ -81,7 +81,7 @@ export default function Home() {
   const [weather, setWeather] = useState<WeatherDaily | null>(null);
   const [weatherNote, setWeatherNote] = useState<string | null>(null); // 오류 안내만 사용
   const [climate, setClimate] = useState<ClimateMonthly | null>(null);
-  const [climateNote, setClimateNote] = useState<string | null>(null);
+  const [climateNote, setClimateNote] = useState<string | null>(null);  
 
   // 로딩/오류(옵션)
   const [loading, setLoading] = useState(false);
@@ -97,7 +97,9 @@ export default function Home() {
     () => `tc_checklist_${country}_${passport}_${from}_${to}_${city?.iata ?? 'NA'}`,
     [country, passport, from, to, city?.iata]
   );
-
+  
+  // 시차
+  const [tzName, setTzName] = useState<string | null>(null);
   const withinForecastWindow = useMemo(() => !!from && daysAhead(from) <= 16, [from]);
 
   /* ---------- 데이터 가져오기 ---------- */
@@ -212,6 +214,8 @@ export default function Home() {
       // 3) 예보(가능하면 추가 표시)
       await fetchForecast();
 
+      await fetchTimezoneAndComputeDiff();
+
       // 4) 쿼리 동기화
       syncQueryToUrl();
     } catch (e: unknown) {
@@ -219,6 +223,31 @@ export default function Home() {
       setErr(msg);
     } finally {
       setLoading(false);
+    }
+  }
+
+  function getOffsetMinutes(timeZone: string, dateStr?: string) {
+    // dateStr 기준(없으면 오늘)으로 해당 TZ의 오프셋을 분 단위로 계산
+    const d = dateStr ? new Date(dateStr + 'T12:00:00') : new Date();
+    const utc = new Date(d.toLocaleString('en-US', { timeZone: 'UTC' }));
+    const tz  = new Date(d.toLocaleString('en-US', { timeZone }));
+    // tz - utc = 오프셋(ms)
+    return Math.round((tz.getTime() - utc.getTime()) / 60000);
+  }
+
+  async function fetchTimezoneAndComputeDiff() {
+    if (!city) { setTzName(null); return; }
+    try {
+      const p = new URLSearchParams({ lat: String(city.lat), lon: String(city.lon) });
+      const r = await fetch(`/api/tz?${p.toString()}`);
+      const j = await r.json();
+      if (r.ok && j?.timezone) {
+        setTzName(j.timezone as string);
+      } else {
+        setTzName(null);
+      }
+    } catch {
+      setTzName(null);
     }
   }
 
@@ -462,8 +491,10 @@ export default function Home() {
             {/* 전압/플러그 */}
             <article className="rounded-2xl border p-4 shadow-sm">
               <h2 className="mb-2 text-lg font-semibold">전압 / 플러그</h2>
-              <div className="mb-2">
-                {(data.power.plugTypes || []).map((t) => (<PlugIcon key={t} type={t} />))}
+              <div className="mb-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {(data.power.plugTypes || []).map((t) => (
+                  <PlugPhotos key={t} type={t} size={84} />
+                ))}
               </div>
               <p className="text-sm">전압/주파수: <b>{data.power.voltage}</b>, <b>{data.power.frequency}</b></p>
               <a
@@ -473,6 +504,37 @@ export default function Home() {
               >
                 출처: WorldStandards
               </a>
+            </article>
+
+            {/* 시차 */}
+            <article className="rounded-2xl border p-4 shadow-sm">
+              <h2 className="mb-2 text-lg font-semibold">시차</h2>
+              {tzName ? (
+                (() => {
+                  const seoul = 'Asia/Seoul';
+                  const baseDate = from || new Date().toISOString().slice(0,10);
+                  const offDest = getOffsetMinutes(tzName, baseDate);
+                  const offSeoul = getOffsetMinutes(seoul, baseDate);
+                  const diffMin = offDest - offSeoul; // 목적지 - 서울
+                  const sign = diffMin > 0 ? '+' : diffMin < 0 ? '−' : '±';
+                  const absMin = Math.abs(diffMin);
+                  const h = Math.floor(absMin / 60);
+                  const m = absMin % 60;
+                  return (
+                    <div className="text-sm">
+                      <div className="mb-1">
+                        <b>{countryName}{city ? ` · ${city.cityEn}` : ''}</b> 시간대: <b>{tzName}</b>
+                      </div>
+                      <div>
+                        한국(Asia/Seoul) 대비 시차: <b>{sign}{h}시간{m ? ` ${m}분` : ''}</b>
+                        <span className="ml-1 opacity-70 text-xs">(출발일 기준)</span>
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : (
+                <div className="text-sm opacity-70">도시/공항을 선택하고 조회하면 시차가 표시됩니다.</div>
+              )}
             </article>
 
             {/* 수하물 */}
