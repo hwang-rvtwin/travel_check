@@ -488,41 +488,7 @@ export default function Home() {
               {data.visa.updatedAt && (
                 <p className="mt-2 text-xs opacity-70">업데이트(비자 스냅샷): {data.visa.updatedAt}</p>
               )}
-            </article>
-
-            {/* eSIM */}
-            <article className="rounded-2xl border p-4 shadow-sm">
-              <h2 className="mb-2 text-lg font-semibold">eSIM</h2>
-              <ul className="list-disc pl-5">
-                {data.esim.deals.map((d, i) => (
-                  <li key={i} className="text-sm">
-                    <a className="text-blue-600 underline" href={d.go}>{d.name}</a>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-2 text-xs opacity-70">일부 링크는 제휴 링크일 수 있어요.</p>
-            </article>
-
-            {/* 전압/플러그 */}
-            <article className="rounded-2xl border p-4 shadow-sm">
-              <h2 className="mb-2 text-lg font-semibold">전압 / 플러그</h2>
-              {/* auto-fit: 타입 개수·화면폭에 따라 칼럼이 자동으로 늘고 줄어듭니다 */}
-               <div className="mb-2 grid gap-3 grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
-                {(data.power.plugTypes || []).map((t, i) => (
-                  <div key={`${t}-${i}`} className="min-w-[140px]">
-                    <PlugPhotos type={t} size={84} />
-                  </div>
-                ))}
-                </div>
-              <p className="text-sm">전압/주파수: <b>{data.power.voltage}</b>, <b>{data.power.frequency}</b></p>
-              <a
-                className="mt-2 inline-block text-sm text-blue-600 underline"
-                href="https://www.worldstandards.eu/electricity/plug-voltage-by-country/"
-                target="_blank" rel="noreferrer"
-              >
-                출처: WorldStandards
-              </a>
-            </article>
+            </article>                        
 
             {/* 시차 */}
             <article className="rounded-2xl border p-4 shadow-sm">
@@ -573,6 +539,52 @@ export default function Home() {
                   </a>
                 ))}
               </div>
+            </article>
+
+            {/* eSIM */}
+            <article className="rounded-2xl border p-4 shadow-sm">
+              <h2 className="mb-2 text-lg font-semibold">eSIM</h2>
+              <ul className="list-disc pl-5">
+                {data.esim.deals.map((d, i) => (
+                  <li key={i} className="text-sm">
+                    <a className="text-blue-600 underline" href={d.go}>{d.name}</a>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-xs opacity-70">일부 링크는 제휴 링크일 수 있어요.</p>
+            </article>
+
+            {/* 전압/플러그 */}
+            <article className="rounded-2xl border p-4 shadow-sm">
+              <h2 className="mb-2 text-lg font-semibold">전압 / 플러그</h2>
+
+              {/* 가로 스크롤 스트립 + 스냅 */}
+              <div className="-mx-2 overflow-x-auto snap-x snap-mandatory">
+                <div className="flex gap-3 px-2">
+                  {(data.power.plugTypes || []).map((t, i) => (
+                    <div key={`${t}-${i}`} className="shrink-0 snap-start w-[220px]">
+                      <PlugPhotos type={t} size={96} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-3 text-sm">
+                전압/주파수: <b>{data.power.voltage}</b>, <b>{data.power.frequency}</b>
+              </div>
+              {data.power.source && (
+                <div className="text-xs mt-1">
+                  출처:{' '}
+                  <a
+                    className="underline"
+                    href="https://www.worldstandards.eu/electricity/plugs-and-sockets/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    WorldStandards
+                  </a>
+                </div>
+              )}
             </article>
           </section>
 
