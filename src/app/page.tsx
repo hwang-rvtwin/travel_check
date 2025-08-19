@@ -152,32 +152,31 @@ export default function Home() {
       u.searchParams.set('longitude', String(city.lon));
       u.searchParams.set('start_date', '1991-01-01');
       u.searchParams.set('end_date', '2020-12-31');
-      u.searchParams.set('models', 'ERA5');
+      // u.searchParams.set('models', 'ERA5'); // ❌ 400의 원인 → 제거
       u.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min');
       u.searchParams.set('timezone', 'auto');
 
       const r = await fetch(u.toString());
+      const j = await r.json().catch(() => null);
+
       if (!r.ok) {
+        const reason = (j && (j.reason || j.error)) ? ` (${j.reason || j.error})` : '';
         setClimate(null);
-        setClimateNote('기후 평균 데이터를 불러오지 못했어요.');
+        setClimateNote('기후 평균 데이터를 불러오지 못했어요.' + reason);
         return;
       }
 
-      const j = await r.json() as {
-        daily?: {
-          time: string[];
-          temperature_2m_max: number[];
-          temperature_2m_min: number[];
-        }
-      };
+      const d = j?.daily as
+        | { time: string[]; temperature_2m_max: number[]; temperature_2m_min: number[] }
+        | undefined;
 
-      const d = j?.daily;
       if (!d || !Array.isArray(d.time) || d.time.length === 0) {
         setClimate(null);
         setClimateNote('해당 지역의 월별 기후 평균을 찾지 못했어요.');
         return;
       }
 
+      // 12개월 누적 → 평균
       const sumMax = new Array(12).fill(0);
       const sumMin = new Array(12).fill(0);
       const cnt = new Array(12).fill(0);
@@ -192,13 +191,13 @@ export default function Home() {
         cnt[m] += 1;
       }
 
-      const avgMax = sumMax.map((s, i) => cnt[i] ? s / cnt[i] : NaN);
-      const avgMin = sumMin.map((s, i) => cnt[i] ? s / cnt[i] : NaN);
+      const avgMax = sumMax.map((s, i) => (cnt[i] ? s / cnt[i] : NaN));
+      const avgMin = sumMin.map((s, i) => (cnt[i] ? s / cnt[i] : NaN));
 
       setClimate({
         time: Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')),
         temperature_2m_max: avgMax,
-        temperature_2m_min: avgMin
+        temperature_2m_min: avgMin,
       });
       setClimateNote(null);
     } catch {
