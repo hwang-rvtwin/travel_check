@@ -79,13 +79,16 @@
     "sources": ["https://www.boca.gov.tw/cp-149-4486-7785a-2.html"]
   },
   "KR-CN": {
-    "status": "visa-required",
-    "max_stay_days": 0,
-    "conditions": ["관광 L비자 필요(일반)"],
-    "notes": "예외: 하이난 성은 59개국 대상 최대 30일 무비자(대한민국 포함). 일부 도시 72/144시간 환승무비자 제도 별도.",
+    "status": "visa-free",
+    "max_stay_days": 30,
+    "conditions": [
+        "단기 목적: 관광·상용·친지방문·교류·환승",
+        "입국 심사관 재량(왕복/제3국 항공권 권장)",
+        "현지 숙소 신고 등 체류 규정 준수"
+    ],
+    "notes": "중국의 일방적 무비자 정책으로 변경될 수 있음. 취업·유학·취재 등은 사전 비자 필요.",
     "sources": [
-      "https://en.nia.gov.cn/n147418/n147463/c180637/content.html",
-      "https://www.visaforchina.cn/SEL5_EN/"
+        "https://www.visaforchina.cn/DEL3_EN/tongzhigonggao/327343163872251904.html"
     ]
   },
   "KR-AE": {
