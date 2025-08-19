@@ -658,7 +658,7 @@ export default function Home() {
               {/* ✅ 쿠팡 파트너스 배너 (배너만 노출) */}
               <div className="mt-4 flex justify-center">
                 <a
-                  href="https://link.coupang.com/a/cLuMAS"
+                  href={`/go/coupang?slug=plug-adapter&country=${country}&city=${city?.cityEn || ''}&from=${from || ''}&to=${to || ''}&placement=power_card_banner`}
                   target="_blank"
                   rel="noopener noreferrer sponsored nofollow"
                   referrerPolicy="unsafe-url"
