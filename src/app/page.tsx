@@ -137,38 +137,71 @@ export default function Home() {
     }
   }
 
-  // 월별 기후 평균(ERA5, 1991–2020) 직접 호출
-  async function fetchClimate() {
-    if (!city) { setClimate(null); setClimateNote(null); return; }
-    try {
-      const u = new URL('https://climate-api.open-meteo.com/v1/climate');
-      u.searchParams.set('latitude', String(city.lat));
-      u.searchParams.set('longitude', String(city.lon));
-      u.searchParams.set('start_year', '1991');
-      u.searchParams.set('end_year', '2020');
-      u.searchParams.set('models', 'ERA5');
-      u.searchParams.set('monthly', 'temperature_2m_max,temperature_2m_min');
+  // 월별 기후 평균(ERA5, 1991–2020) — Historical(archive) API 호출 후 월평균 계산
+async function fetchClimate() {
+  if (!city) { setClimate(null); setClimateNote(null); return; }
 
-      const r = await fetch(u.toString());
-      if (!r.ok) {
-        setClimate(null);
-        setClimateNote('기후 평균 데이터를 불러오지 못했어요.');
-        return;
-      }
-      const j = (await r.json()) as { monthly?: ClimateMonthly };
-      const monthly = j?.monthly;
-      if (monthly && Array.isArray(monthly.time) && monthly.time.length >= 12) {
-        setClimate(monthly);
-        setClimateNote(null);
-      } else {
-        setClimate(null);
-        setClimateNote('해당 지역의 월별 기후 평균을 찾지 못했어요.');
-      }
-    } catch {
+  try {
+    const u = new URL('https://archive-api.open-meteo.com/v1/archive');
+    u.searchParams.set('latitude', String(city.lat));
+    u.searchParams.set('longitude', String(city.lon));
+    u.searchParams.set('start_date', '1991-01-01');
+    u.searchParams.set('end_date', '2020-12-31');
+    u.searchParams.set('models', 'ERA5'); // 평년 기준 일관성
+    u.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min');
+    u.searchParams.set('timezone', 'auto'); // daily에는 timezone 요구
+
+    const r = await fetch(u.toString());
+    if (!r.ok) {
       setClimate(null);
       setClimateNote('기후 평균 데이터를 불러오지 못했어요.');
+      return;
     }
+
+    const j = await r.json() as {
+      daily?: {
+        time: string[];
+        temperature_2m_max: number[];
+        temperature_2m_min: number[];
+      }
+    };
+
+    const d = j?.daily;
+    if (!d || !Array.isArray(d.time) || d.time.length === 0) {
+      setClimate(null);
+      setClimateNote('해당 지역의 월별 기후 평균을 찾지 못했어요.');
+      return;
+    }
+
+    // 12개월 누적 → 평균
+    const sumMax = new Array(12).fill(0);
+    const sumMin = new Array(12).fill(0);
+    const cnt = new Array(12).fill(0);
+
+    for (let i = 0; i < d.time.length; i++) {
+      const t = d.time[i];
+      const m = new Date(t).getMonth(); // 0~11
+      const tmax = d.temperature_2m_max[i];
+      const tmin = d.temperature_2m_min[i];
+      if (Number.isFinite(tmax)) { sumMax[m] += tmax; }
+      if (Number.isFinite(tmin)) { sumMin[m] += tmin; }
+      cnt[m] += 1;
+    }
+
+    const avgMax = sumMax.map((s, i) => cnt[i] ? s / cnt[i] : NaN);
+    const avgMin = sumMin.map((s, i) => cnt[i] ? s / cnt[i] : NaN);
+
+    setClimate({
+      time: Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')),
+      temperature_2m_max: avgMax,
+      temperature_2m_min: avgMin
+    });
+    setClimateNote(null);
+  } catch {
+    setClimate(null);
+    setClimateNote('기후 평균 데이터를 불러오지 못했어요.');
   }
+}
 
   // 메인 조회(예보 → 필요 시 기후)
   async function fetchData() {
