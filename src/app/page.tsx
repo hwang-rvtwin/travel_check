@@ -32,7 +32,7 @@ type WeatherDaily = {
 };
 
 type ClimateMonthly = {
-  time: string[]; // 월 단위 타임라인
+  time: string[]; // '01'..'12' 같은 12개
   temperature_2m_max: number[]; // 월평균 최고
   temperature_2m_min: number[]; // 월평균 최저
 };
@@ -79,7 +79,7 @@ export default function Home() {
 
   // 날씨(예보) & 기후(평년)
   const [weather, setWeather] = useState<WeatherDaily | null>(null);
-  const [weatherNote, setWeatherNote] = useState<string | null>(null);
+  const [weatherNote, setWeatherNote] = useState<string | null>(null); // 오류 안내만 사용
   const [climate, setClimate] = useState<ClimateMonthly | null>(null);
   const [climateNote, setClimateNote] = useState<string | null>(null);
 
@@ -105,109 +105,113 @@ export default function Home() {
     if (!city || !from || !to) { setWeather(null); setWeatherNote(null); return { hadData:false, beyond:false }; }
 
     const lead = daysAhead(from);
-    // 16일보다 멀면 굳이 호출하지 않고 바로 기후로 전환
     if (lead > 16) {
+      // 범위 밖: 예보는 조용히 생략 (에러 문구 없음)
       setWeather(null);
-      setWeatherNote('출발일이 아직 멀어 예보가 제공되지 않아요. 대신 월별 기후 평균을 보여드릴게요.');
+      setWeatherNote(null);
       return { hadData:false, beyond:true };
     }
 
     const p = new URLSearchParams({ lat: String(city.lat), lon: String(city.lon), from, to });
-    const r = await fetch(`/api/weather?${p.toString()}`);
-    const j = (await r.json()) as { daily?: WeatherDaily | null; note?: string | null };
+    try {
+      const r = await fetch(`/api/weather?${p.toString()}`);
+      const j = (await r.json()) as { daily?: WeatherDaily | null; note?: string | null };
 
-    const daily = j?.daily ?? null;
-    if (daily && Array.isArray(daily.time) && daily.time.length > 0) {
-      setWeather(daily);
-      setWeatherNote(null);
-      return { hadData:true, beyond:false };
-    } else {
-      setWeather(null);
-      const note = j?.note;
-      if (note === 'beyond-range') {
-        setWeatherNote('출발일이 아직 멀어 예보가 제공되지 않아요. 대신 월별 기후 평균을 보여드릴게요.');
-        return { hadData:false, beyond:true };
-      }
-      if (note === 'fetch-failed' || note === 'fetch-error') {
-        setWeatherNote('날씨 API 호출에 실패했어요. 잠시 후 다시 시도해 주세요.');
+      const daily = j?.daily ?? null;
+      if (daily && Array.isArray(daily.time) && daily.time.length > 0) {
+        setWeather(daily);
+        setWeatherNote(null);
+        return { hadData:true, beyond:false };
       } else {
-        setWeatherNote('해당 기간에 대한 예보 데이터를 찾지 못했어요.');
+        // note: beyond-range 는 서버에서 올 수 있지만, 여기서는 조용히 무시
+        if (j?.note && j.note !== 'beyond-range') {
+          setWeatherNote(j.note === 'fetch-error' || String(j.note).startsWith('fetch-failed')
+            ? '날씨 API 호출에 실패했어요. 잠시 후 다시 시도해 주세요.'
+            : '해당 기간에 대한 예보 데이터를 찾지 못했어요.'
+          );
+        } else {
+          setWeatherNote(null);
+        }
+        setWeather(null);
+        return { hadData:false, beyond: j?.note === 'beyond-range' };
       }
+    } catch {
+      setWeather(null);
+      setWeatherNote('날씨 API 호출에 실패했어요. 잠시 후 다시 시도해 주세요.');
       return { hadData:false, beyond:false };
     }
   }
 
   // 월별 기후 평균(ERA5, 1991–2020) — Historical(archive) API 호출 후 월평균 계산
-async function fetchClimate() {
-  if (!city) { setClimate(null); setClimateNote(null); return; }
+  async function fetchClimate() {
+    if (!city) { setClimate(null); setClimateNote(null); return; }
 
-  try {
-    const u = new URL('https://archive-api.open-meteo.com/v1/archive');
-    u.searchParams.set('latitude', String(city.lat));
-    u.searchParams.set('longitude', String(city.lon));
-    u.searchParams.set('start_date', '1991-01-01');
-    u.searchParams.set('end_date', '2020-12-31');
-    u.searchParams.set('models', 'ERA5'); // 평년 기준 일관성
-    u.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min');
-    u.searchParams.set('timezone', 'auto'); // daily에는 timezone 요구
+    try {
+      const u = new URL('https://archive-api.open-meteo.com/v1/archive');
+      u.searchParams.set('latitude', String(city.lat));
+      u.searchParams.set('longitude', String(city.lon));
+      u.searchParams.set('start_date', '1991-01-01');
+      u.searchParams.set('end_date', '2020-12-31');
+      u.searchParams.set('models', 'ERA5');
+      u.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min');
+      u.searchParams.set('timezone', 'auto');
 
-    const r = await fetch(u.toString());
-    if (!r.ok) {
+      const r = await fetch(u.toString());
+      if (!r.ok) {
+        setClimate(null);
+        setClimateNote('기후 평균 데이터를 불러오지 못했어요.');
+        return;
+      }
+
+      const j = await r.json() as {
+        daily?: {
+          time: string[];
+          temperature_2m_max: number[];
+          temperature_2m_min: number[];
+        }
+      };
+
+      const d = j?.daily;
+      if (!d || !Array.isArray(d.time) || d.time.length === 0) {
+        setClimate(null);
+        setClimateNote('해당 지역의 월별 기후 평균을 찾지 못했어요.');
+        return;
+      }
+
+      const sumMax = new Array(12).fill(0);
+      const sumMin = new Array(12).fill(0);
+      const cnt = new Array(12).fill(0);
+
+      for (let i = 0; i < d.time.length; i++) {
+        const t = d.time[i];
+        const m = new Date(t).getMonth(); // 0~11
+        const tmax = d.temperature_2m_max[i];
+        const tmin = d.temperature_2m_min[i];
+        if (Number.isFinite(tmax)) sumMax[m] += tmax;
+        if (Number.isFinite(tmin)) sumMin[m] += tmin;
+        cnt[m] += 1;
+      }
+
+      const avgMax = sumMax.map((s, i) => cnt[i] ? s / cnt[i] : NaN);
+      const avgMin = sumMin.map((s, i) => cnt[i] ? s / cnt[i] : NaN);
+
+      setClimate({
+        time: Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')),
+        temperature_2m_max: avgMax,
+        temperature_2m_min: avgMin
+      });
+      setClimateNote(null);
+    } catch {
       setClimate(null);
       setClimateNote('기후 평균 데이터를 불러오지 못했어요.');
-      return;
     }
-
-    const j = await r.json() as {
-      daily?: {
-        time: string[];
-        temperature_2m_max: number[];
-        temperature_2m_min: number[];
-      }
-    };
-
-    const d = j?.daily;
-    if (!d || !Array.isArray(d.time) || d.time.length === 0) {
-      setClimate(null);
-      setClimateNote('해당 지역의 월별 기후 평균을 찾지 못했어요.');
-      return;
-    }
-
-    // 12개월 누적 → 평균
-    const sumMax = new Array(12).fill(0);
-    const sumMin = new Array(12).fill(0);
-    const cnt = new Array(12).fill(0);
-
-    for (let i = 0; i < d.time.length; i++) {
-      const t = d.time[i];
-      const m = new Date(t).getMonth(); // 0~11
-      const tmax = d.temperature_2m_max[i];
-      const tmin = d.temperature_2m_min[i];
-      if (Number.isFinite(tmax)) { sumMax[m] += tmax; }
-      if (Number.isFinite(tmin)) { sumMin[m] += tmin; }
-      cnt[m] += 1;
-    }
-
-    const avgMax = sumMax.map((s, i) => cnt[i] ? s / cnt[i] : NaN);
-    const avgMin = sumMin.map((s, i) => cnt[i] ? s / cnt[i] : NaN);
-
-    setClimate({
-      time: Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')),
-      temperature_2m_max: avgMax,
-      temperature_2m_min: avgMin
-    });
-    setClimateNote(null);
-  } catch {
-    setClimate(null);
-    setClimateNote('기후 평균 데이터를 불러오지 못했어요.');
   }
-}
 
-  // 메인 조회(예보 → 필요 시 기후)
+  // 메인 조회: 항상 기후 먼저 → 예보(가능 시)
   async function fetchData() {
     setLoading(true); setErr(null);
     try {
-      // 기본 데이터(/api/check)
+      // 1) 기본 데이터(/api/check)
       const params = new URLSearchParams({ country, passport, from, to });
       const res = await fetch(`/api/check?${params.toString()}`);
       if (!res.ok) throw new Error('국가 코드를 확인하세요.');
@@ -227,16 +231,13 @@ async function fetchClimate() {
 
       setData(json);
 
-      // 예보 → 없거나 범위 밖이면 기후 평균으로 대체
-      const result = await fetchForecast();
-      if (!result.hadData && result.beyond) {
-        await fetchClimate();
-      } else {
-        setClimate(null);
-        setClimateNote(null);
-      }
+      // 2) 기후(평년) 먼저 표시
+      await fetchClimate();
 
-      // 쿼리 동기화
+      // 3) 예보(가능하면 추가 표시)
+      await fetchForecast();
+
+      // 4) 쿼리 동기화
       syncQueryToUrl();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : '알 수 없는 오류';
@@ -383,25 +384,8 @@ async function fetchClimate() {
       {loading && <div className="mt-2 text-sm">불러오는 중…</div>}
       {err && <div className="mt-2 text-sm text-red-600">오류: {err}</div>}
 
-      {/* 날씨(예보) */}
-      {weather && (
-        <article className="mt-6 rounded-2xl border p-4 shadow-sm">
-          <h2 className="mb-2 text-lg font-semibold">날씨 · {city?.cityEn} {from && to ? `(${from} ~ ${to})` : ''}</h2>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
-            {weather.time.map((t, i) => (
-              <div key={t} className="rounded border p-3 text-sm">
-                <div className="font-medium">{t}</div>
-                <div>최고 {weather.temperature_2m_max[i]}° / 최저 {weather.temperature_2m_min[i]}°</div>
-                <div>강수확률 최대 {weather.precipitation_probability_max[i] ?? '-'}%</div>
-              </div>
-            ))}
-          </div>
-          <p className="mt-2 text-xs opacity-70">※ Open-Meteo 일별 예보(출발 약 14~16일 전부터 제공)</p>
-        </article>
-      )}
-
-      {/* 기후(평년) — 예보가 없을 때 대체 */}
-      {!weather && climate && (
+      {/* 기후(평년) — 항상 기본 제공 */}
+      {climate && (
         <article className="mt-6 rounded-2xl border p-4 shadow-sm">
           <h2 className="mb-2 text-lg font-semibold">월별 기후 평균 · {city?.cityEn}</h2>
           {tripMonths.length > 0 ? (
@@ -417,7 +401,7 @@ async function fetchClimate() {
                   return (
                     <div key={m} className="rounded border p-3 text-sm">
                       <div className="font-medium">{MONTH_LABELS[idx]}</div>
-                      <div>평균 최고 {tmax?.toFixed?.(1) ?? '-'}° / 평균 최저 {tmin?.toFixed?.(1) ?? '-'}°</div>
+                      <div>평균 최고 {Number.isFinite(tmax) ? tmax.toFixed(1) : '-'}° / 평균 최저 {Number.isFinite(tmin) ? tmin.toFixed(1) : '-'}°</div>
                     </div>
                   );
                 })}
@@ -431,8 +415,7 @@ async function fetchClimate() {
                   <div key={idx} className="rounded border p-3 text-sm">
                     <div className="font-medium">{MONTH_LABELS[idx]}</div>
                     <div>
-                      평균 최고 {climate.temperature_2m_max[idx]?.toFixed?.(1) ?? '-'}° / 평균 최저{' '}
-                      {climate.temperature_2m_min[idx]?.toFixed?.(1) ?? '-'}°
+                      평균 최고 {Number.isFinite(climate.temperature_2m_max[idx]) ? climate.temperature_2m_max[idx].toFixed(1) : '-'}° / 평균 최저 {Number.isFinite(climate.temperature_2m_min[idx]) ? climate.temperature_2m_min[idx].toFixed(1) : '-'}°
                     </div>
                   </div>
                 ))}
@@ -440,16 +423,32 @@ async function fetchClimate() {
             </>
           )}
           <p className="mt-2 text-xs opacity-70">
-            ※ 예보 범위를 벗어나 <b>과거 기후 평균(1991–2020, ERA5)</b>을 표시했습니다. 실제 기상은 다를 수 있어요.
+            ※ 예보는 보통 출발 <b>14~16일 전</b>부터 확인 가능해요. 그 전엔 기후 평균으로 대비하세요.
           </p>
         </article>
       )}
-      {/* 평년 안내 메모 */}
-      {!weather && weatherNote && (
-        <div className="mt-2 text-xs opacity-70">※ {weatherNote}</div>
-      )}
-      {!weather && climateNote && (
+      {!climate && climateNote && (
         <div className="mt-2 text-xs text-red-600">{climateNote}</div>
+      )}
+
+      {/* 날씨(예보) — 가능할 때 추가 제공 */}
+      {weather && (
+        <article className="mt-6 rounded-2xl border p-4 shadow-sm">
+          <h2 className="mb-2 text-lg font-semibold">가까운 예보 · {city?.cityEn} {from && to ? `(${from} ~ ${to})` : ''}</h2>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+            {weather.time.map((t, i) => (
+              <div key={t} className="rounded border p-3 text-sm">
+                <div className="font-medium">{t}</div>
+                <div>최고 {weather.temperature_2m_max[i]}° / 최저 {weather.temperature_2m_min[i]}°</div>
+                <div>강수확률 최대 {weather.precipitation_probability_max[i] ?? '-'}%</div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-2 text-xs opacity-70">※ Open-Meteo 일별 예보(출발 약 14~16일 전부터 제공)</p>
+        </article>
+      )}
+      {weatherNote && (
+        <div className="mt-2 text-xs opacity-70">※ {weatherNote}</div>
       )}
 
       {/* 결과 카드 */}
