@@ -479,7 +479,7 @@ export default function Home() {
             </>
           )}
           <p className="mt-2 text-xs opacity-70">
-            ※ 예보는 보통 출발 <b>14~16일 전</b>부터 확인 가능해요. 그 전엔 기후 평균으로 대비하세요.
+            ※ 예보는 보통 출발 <b>14~16일 전</b>부터 확인 가능해요. 그 외엔 기후 평균으로 대비하세요.
           </p>
         </article>
       )}
@@ -654,6 +654,32 @@ export default function Home() {
                   </a>
                 </div>
               )}
+
+              {/* ✅ 쿠팡 파트너스 배너 (배너만 노출) */}
+              <div className="mt-4 flex justify-center">
+                <a
+                  href="https://link.coupang.com/a/cLuMAS"
+                  target="_blank"
+                  rel="noopener noreferrer sponsored nofollow"
+                  referrerPolicy="unsafe-url"
+                  aria-label="쿠팡에서 여행용 멀티 플러그 어댑터 보기"
+                  className="block rounded-lg border overflow-hidden"
+                >
+                  <img
+                    src="https://image3.coupangcdn.com/image/affiliate/banner/454846be3c31a68bceb07da77a387c71@2x.jpg"
+                    alt="엘디엑크스 5포트 고속충전 PD45W 해외 여행용 멀티 플러그 어댑터, 화이트, 1개"
+                    width={120}
+                    height={240}
+                    loading="lazy"
+                  />
+                </a>
+              </div>
+
+              {/* 제휴 고지 */}
+              <p className="mt-2 text-xs opacity-70 leading-relaxed">
+                * 본 서비스의 일부 배너/링크는 <b>쿠팡 파트너스 제휴 배너/링크</b>입니다.
+                해당 배너/링크를 통해 구매하시면 운영자가 일정액의 수수료를 제공받습니다.
+              </p>              
             </article>
           </section>
 
