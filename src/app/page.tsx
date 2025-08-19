@@ -100,6 +100,21 @@ export default function Home() {
   
   // 시차
   const [tzName, setTzName] = useState<string | null>(null);
+  // 현재 시각(1분 단위로 갱신)
+  const [now, setNow] = useState<Date>(new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  // 날짜/시간을 타임존에 맞춰 보기 좋게 포맷
+  function fmtZoned(d: Date, timeZone: string) {
+    return new Intl.DateTimeFormat('ko-KR', {
+      timeZone,
+      year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short',
+      hour: '2-digit', minute: '2-digit', hour12: false
+    }).format(d);
+  }
   const withinForecastWindow = useMemo(() => !!from && daysAhead(from) <= 16, [from]);
 
   /* ---------- 데이터 가져오기 ---------- */
@@ -491,11 +506,15 @@ export default function Home() {
             {/* 전압/플러그 */}
             <article className="rounded-2xl border p-4 shadow-sm">
               <h2 className="mb-2 text-lg font-semibold">전압 / 플러그</h2>
-              <div className="mb-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {(data.power.plugTypes || []).map((t) => (
-                  <PlugPhotos key={t} type={t} size={84} />
-                ))}
-              </div>
+              {/* auto-fit 그리드: 플러그 타입 개수/화면폭에 맞춰 자연스럽게 줄맞춤 */}
+                <div
+                  className="mb-2 grid gap-3"
+                  style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))' }}
+                >
+                  {(data.power.plugTypes || []).map((t) => (
+                    <PlugPhotos key={t} type={t} size={84} />
+                  ))}
+                </div>
               <p className="text-sm">전압/주파수: <b>{data.power.voltage}</b>, <b>{data.power.frequency}</b></p>
               <a
                 className="mt-2 inline-block text-sm text-blue-600 underline"
@@ -511,20 +530,27 @@ export default function Home() {
               <h2 className="mb-2 text-lg font-semibold">시차</h2>
               {tzName ? (
                 (() => {
-                  const seoul = 'Asia/Seoul';
-                  const baseDate = from || new Date().toISOString().slice(0,10);
+                  const seoulTZ = 'Asia/Seoul';
+                  const baseDate = from || new Date().toISOString().slice(0,10); // 시차 계산 기준(출발일)
                   const offDest = getOffsetMinutes(tzName, baseDate);
-                  const offSeoul = getOffsetMinutes(seoul, baseDate);
+                  const offSeoul = getOffsetMinutes(seoulTZ, baseDate);
                   const diffMin = offDest - offSeoul; // 목적지 - 서울
                   const sign = diffMin > 0 ? '+' : diffMin < 0 ? '−' : '±';
                   const absMin = Math.abs(diffMin);
                   const h = Math.floor(absMin / 60);
                   const m = absMin % 60;
+
+                  // 현재 시각(실시간)
+                  const localNow = fmtZoned(now, tzName);
+                  const seoulNow = fmtZoned(now, seoulTZ);
+
                   return (
-                    <div className="text-sm">
+                    <div className="text-sm space-y-1">
                       <div className="mb-1">
                         <b>{countryName}{city ? ` · ${city.cityEn}` : ''}</b> 시간대: <b>{tzName}</b>
                       </div>
+                      <div>현지 현재 시각: <b>{localNow}</b></div>
+                      <div className="opacity-80">한국(Seoul) 현재 시각: {seoulNow}</div>
                       <div>
                         한국(Asia/Seoul) 대비 시차: <b>{sign}{h}시간{m ? ` ${m}분` : ''}</b>
                         <span className="ml-1 opacity-70 text-xs">(출발일 기준)</span>
@@ -533,7 +559,7 @@ export default function Home() {
                   );
                 })()
               ) : (
-                <div className="text-sm opacity-70">도시/공항을 선택하고 조회하면 시차가 표시됩니다.</div>
+                <div className="text-sm opacity-70">도시/공항을 선택하고 조회하면 시차와 현지 시간이 표시됩니다.</div>
               )}
             </article>
 
