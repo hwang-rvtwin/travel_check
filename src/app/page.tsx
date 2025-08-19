@@ -508,9 +508,9 @@ export default function Home() {
               <h2 className="mb-2 text-lg font-semibold">전압 / 플러그</h2>
               {/* auto-fit: 타입 개수·화면폭에 따라 칼럼이 자동으로 늘고 줄어듭니다 */}
                <div className="mb-2 grid gap-3 grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
-                {(data.power.plugTypes || []).map((t) => (                  
-                  <div className="min-w-[140px]">
-                    <PlugPhotos key={t} type={t} size={84} />
+                {(data.power.plugTypes || []).map((t, i) => (
+                  <div key={`${t}-${i}`} className="min-w-[140px]">
+                    <PlugPhotos type={t} size={84} />
                   </div>
                 ))}
                 </div>
