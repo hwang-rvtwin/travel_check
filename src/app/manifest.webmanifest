@@ -1,0 +1,12 @@
+{
+  "name": "출국 체크허브",
+  "short_name": "체크허브",
+  "icons": [
+    { "src": "/icon.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/"
+}

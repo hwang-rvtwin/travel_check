@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { COUNTRIES, type Country, type City } from '@/data/geo';
 import PlugPhotos from '@/components/PlugPhotos';
@@ -74,6 +75,33 @@ const MONTH_LABELS = ['1월','2월','3월','4월','5월','6월','7월','8월','9
 
 /* ---------- 페이지 ---------- */
 export default function Home() {
+  const router = useRouter();
+
+  function clearQueryString() {
+    if (typeof window !== 'undefined') {
+      const u = new URL(window.location.href);
+      u.search = '';
+      window.history.replaceState({}, '', u.pathname);
+    }
+  }
+
+  function resetAll() {
+    // 폼/결과 상태 전부 초기화(프로젝트에 있는 state 이름 기준으로 맞춰주세요)
+    setCountry('');         // 국가 초기화
+    setCountryName('');     // 국가명 표시용
+    setCity(null);          // 공항/도시
+    setFrom(''); setTo(''); // 날짜
+    setPassport('KR');      // 기본 여권(원래 기본값이 있으면 그 값으로)
+    setData(null);          // 결과 묶음
+    setClimate(null); //setForecast(null);
+    setTzName(null);
+    setFx(null); setFxNote(null);
+    // 필요시 다른 파생 상태도 초기화
+
+    clearQueryString();
+    router.push('/');
+  }
+
   // 입력/상태
   const [country, setCountry] = useState('JP');            // ISO2 (내부용)
   const [countryName, setCountryName] = useState('Japan'); // 표시용
@@ -131,7 +159,6 @@ export default function Home() {
     return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: code }).format(n);
   }
   /* ---------- 데이터 가져오기 ---------- */
-
   // 예보 API 호출 (서버 라우트 사용)
   async function fetchForecast() {
     if (!city || !from || !to) { setWeather(null); setWeatherNote(null); return { hadData:false, beyond:false }; }
@@ -365,7 +392,13 @@ export default function Home() {
     <main className="mx-auto max-w-4xl p-4">
       {/* 헤더 */}
       <header className="flex flex-col gap-2 py-2 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-xl font-bold">출국 체크허브 ✈️</h1>
+        <button
+          onClick={resetAll}
+          className="group inline-flex items-center gap-2 text-2xl font-extrabold mb-4 hover:opacity-80"
+          title="초기화하고 홈으로 이동"
+        >
+          출국 체크허브 ✈️          
+        </button>
         <div className="text-xs opacity-70">
           ※ 본 요약은 참고용입니다. 최종 규정은 항공사·출입국·대사관 공지를 따르며, 최신 정보는 IATA/정부 사이트에서 확인하세요.
         </div>
