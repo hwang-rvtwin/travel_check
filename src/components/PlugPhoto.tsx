@@ -1,40 +1,26 @@
-// src/components/PlugPhoto.tsx
 'use client';
+import Image from 'next/image';
+import { useState } from 'react';
 
-type Props = {
-  type: string;           // "A" | "B" | "C" ...
-  labelPosition?: 'below' | 'right';
-  size?: number;          // 이미지 px, 기본 64
-};
+type Props = { type: string; size?: number };
 
-const TYPE_NAME: Record<string, string> = {
-  A: 'Type A', B: 'Type B', C: 'Type C', D: 'Type D', E: 'Type E', F: 'Type F',
-  G: 'Type G', H: 'Type H', I: 'Type I', J: 'Type J', K: 'Type K', L: 'Type L',
-  M: 'Type M', N: 'Type N'
-};
-
-export default function PlugPhoto({ type, size = 64, labelPosition = 'below' }: Props) {
-  const t = (type || '').toUpperCase().replace(/[^A-Z]/g, '');
-  const title = TYPE_NAME[t] || `Type ${t}`;
-  // 이미지 경로 규칙: public/images/plugs/A.webp (없으면 png → jpg → placeholder)
-  const srcs = [
-    `/images/plugs/${t}.webp`,
-    `/images/plugs/${t}.png`,
-    `/images/plugs/${t}.jpg`,
-    `/images/plugs/placeholder.png`
-  ];
+export default function PlugPhoto({ type, size = 80 }: Props) {
+  const plug0 = `/plugs/${type}_3d.png`;
+  const sock0 = `/plugs/${type}_sock.png`;
+  const [plug, setPlug] = useState(plug0);
+  const [sock, setSock] = useState(sock0);
 
   return (
-    <div className={`flex items-center ${labelPosition === 'below' ? 'flex-col' : 'flex-row gap-2'}`}>
-      <img
-        src={srcs[0]}
-        onError={(e) => { const el = e.currentTarget as HTMLImageElement; const next = srcs.find(s => s !== el.src.replace(location.origin, '')); if (next) el.src = next; }}
-        alt={`${title} plug`}
-        width={size}
-        height={size}
-        className="rounded-md border object-cover bg-white"
-      />
-      <span className="text-xs opacity-80">{title}</span>
+    <div className="flex items-center gap-3 rounded-xl border bg-zinc-800/5 p-2">
+      <div className="rounded-lg bg-black/5 p-2">
+        <Image src={plug} alt={`Type ${type} plug`} width={size} height={size}
+               onError={() => setPlug('/plugs/placeholder_3d.png')} />
+      </div>
+      <div className="rounded-lg bg-black/5 p-2">
+        <Image src={sock} alt={`Type ${type} socket`} width={size} height={size}
+               onError={() => setSock('/plugs/placeholder_sock.png')} />
+      </div>
+      <div className="ml-1 text-xs opacity-70">Type <b>{type}</b></div>
     </div>
   );
 }

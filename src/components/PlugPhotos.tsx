@@ -1,65 +1,44 @@
-// src/components/PlugPhotos.tsx
 'use client';
+import Image from 'next/image';
+import { useState, useMemo } from 'react';
 
-type Props = {
-  type: string;            // e.g. "A", "B", "C" ...
-  size?: number;           // 한 이미지 변의 px, 기본 80
-  stacked?: boolean;       // true면 세로 배치, 기본 가로 배치
-  showLabel?: boolean;     // 타입 라벨 표시 여부
-};
+type Props = { type: string; size?: number };
 
-const TYPE_NAME: Record<string, string> = {
-  A: 'Type A', B: 'Type B', C: 'Type C', D: 'Type D', E: 'Type E', F: 'Type F',
-  G: 'Type G', H: 'Type H', I: 'Type I', J: 'Type J', K: 'Type K', L: 'Type L',
-  M: 'Type M', N: 'Type N'
-};
+export default function PlugPhotos({ type, size = 80 }: Props) {
+  const plugSrc0 = `/plugs/${type}_3d.png`;
+  const sockSrc0 = `/plugs/${type}_sock.png`;
+  const phPlug = '/plugs/placeholder_3d.png';
+  const phSock = '/plugs/placeholder_sock.png';
 
-function nextSrc(current: string, candidates: string[]) {
-  const idx = candidates.findIndex(s => current.endsWith(s));
-  const next = candidates[idx + 1];
-  return next || candidates[candidates.length - 1];
-}
+  const [plugSrc, setPlugSrc] = useState(plugSrc0);
+  const [sockSrc, setSockSrc] = useState(sockSrc0);
 
-export default function PlugPhotos({ type, size = 80, stacked = false, showLabel = true }: Props) {
-  const t = (type || '').toUpperCase().replace(/[^A-Z]/g, '');
-  const title = TYPE_NAME[t] || `Type ${t}`;
-
-  // 파일 우선순위(있는 것부터 사용). png만 준비되어도 OK
-  const base = `/images/plugs/${t}`;
-  const cand3D  = [`${t}_3d.webp`, `${t}_3d.png`, `${t}_3d.jpg`, `placeholder_3d.png`].map(s => `/images/plugs/${s}`);
-  const candSock = [`${t}_sock.webp`, `${t}_sock.png`, `${t}_sock.jpg`, `placeholder_sock.png`].map(s => `/images/plugs/${s}`);
-
-  const layout = stacked ? 'flex-col' : 'flex-row';
+  // 접근성용 라벨
+  const label = useMemo(() => `Type ${type}`, [type]);
 
   return (
-    <figure className={`w-full flex ${layout} items-center justify-center gap-3 rounded-lg border p-2 bg-white`}>
-      <img
-        src={cand3D[0]}
-        alt={`${title} plug (3D)`}
-        width={size}
-        height={size}
-        className="rounded-md object-cover border bg-white"
-        onError={(e) => {
-          const el = e.currentTarget as HTMLImageElement;
-          el.src = nextSrc(el.src.replace(location.origin, ''), cand3D);
-        }}
-      />
-      <img
-        src={candSock[0]}
-        alt={`${title} socket`}
-        width={size}
-        height={size}
-        className="rounded-md object-cover border bg-white"
-        onError={(e) => {
-          const el = e.currentTarget as HTMLImageElement;
-          el.src = nextSrc(el.src.replace(location.origin, ''), candSock);
-        }}
-      />
-      {showLabel && (
-        <figcaption className="text-xs opacity-80 text-center w-full">
-          {title}
-        </figcaption>
-      )}
-    </figure>
+    <div className="flex items-center gap-3 rounded-xl border bg-zinc-800/5 p-2">
+      <div className="rounded-lg bg-black/5 p-2">
+        <Image
+          src={plugSrc}
+          alt={`${label} plug`}
+          width={size}
+          height={size}
+          onError={() => setPlugSrc(phPlug)}
+        />
+      </div>
+      <div className="rounded-lg bg-black/5 p-2">
+        <Image
+          src={sockSrc}
+          alt={`${label} socket`}
+          width={size}
+          height={size}
+          onError={() => setSockSrc(phSock)}
+        />
+      </div>
+      <div className="ml-1 text-xs opacity-70">
+        Type <b>{type}</b>
+      </div>
+    </div>
   );
 }

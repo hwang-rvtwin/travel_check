@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { COUNTRIES, type Country, type City } from '@/data/geo';
 import PlugPhotos from '@/components/PlugPhotos';
 import { CURRENCY_BY_ISO2 } from '@/data/currency';
-
+import Image from 'next/image';
 
 /* ---------- 타입 ---------- */
 type VisaInfo = { summary: string; sources?: { title: string; url: string }[]; updatedAt?: string | null };
@@ -688,7 +688,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ✅ 쿠팡 파트너스 배너 (배너만 노출) */}
+              {/* ✅ 쿠팡 파트너스 배너 (next/image 사용) */}
               <div className="mt-4 flex justify-center">
                 <a
                   href={`/go/coupang?slug=plug-adapter&country=${country}&city=${city?.cityEn || ''}&from=${from || ''}&to=${to || ''}&placement=power_card_banner`}
@@ -698,12 +698,12 @@ export default function Home() {
                   aria-label="쿠팡에서 여행용 멀티 플러그 어댑터 보기"
                   className="block rounded-lg border overflow-hidden"
                 >
-                  <img
+                  <Image
                     src="https://image3.coupangcdn.com/image/affiliate/banner/454846be3c31a68bceb07da77a387c71@2x.jpg"
                     alt="엘디엑크스 5포트 고속충전 PD45W 해외 여행용 멀티 플러그 어댑터, 화이트, 1개"
                     width={120}
                     height={240}
-                    loading="lazy"
+                    priority={false}
                   />
                 </a>
               </div>
