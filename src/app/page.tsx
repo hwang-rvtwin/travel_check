@@ -405,7 +405,7 @@ export default function Home() {
       </header>
 
       {/* 입력 영역 */}
-      <section className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-6">
+      <section className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-6 min-w-0">
         {/* 나라 선택 */}
         <div className="sm:col-span-2">
           <label className="text-sm">나라 선택</label>
@@ -448,11 +448,11 @@ export default function Home() {
         {/* 출국/귀국일 */}
         <div className="min-w-0">
           <label className="text-sm">출국일</label>
-          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-full max-w-full min-w-0 rounded-md border px-3 py-2 text-[16px] bg-white dark:bg-zinc-900" />
+          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="ios-date-fix w-full max-w-full min-w-0 rounded-md border px-3 py-2 bg-white dark:bg-zinc-900" />
         </div>
         <div className="min-w-0">
           <label className="text-sm">귀국일</label>
-          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-full max-w-full min-w-0 rounded-md border px-3 py-2 text-[16px] bg-white dark:bg-zinc-900" />
+          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="ios-date-fix w-full max-w-full min-w-0 rounded-md border px-3 py-2 bg-white dark:bg-zinc-900" />
         </div>
 
         {/* 조회 버튼 */}
