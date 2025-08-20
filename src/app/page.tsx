@@ -446,11 +446,11 @@ export default function Home() {
         </div>
 
         {/* 출국/귀국일 */}
-        <div className="min-w-0">
+        <div className="sm:col-span-1">
           <label className="text-sm">출국일</label>
           <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="ios-date-fix w-full max-w-full min-w-0 rounded-md border px-3 py-2 bg-white dark:bg-zinc-900" />
         </div>
-        <div className="min-w-0">
+        <div className="sm:col-span-1">
           <label className="text-sm">귀국일</label>
           <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="ios-date-fix w-full max-w-full min-w-0 rounded-md border px-3 py-2 bg-white dark:bg-zinc-900" />
         </div>
