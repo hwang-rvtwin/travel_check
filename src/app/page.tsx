@@ -6,6 +6,7 @@ import { COUNTRIES, type Country, type City } from '@/data/geo';
 import PlugPhotos from '@/components/PlugPhotos';
 import { CURRENCY_BY_ISO2 } from '@/data/currency';
 import Image from 'next/image';
+import DateField from '@/components/DateField';
 
 /* ---------- 타입 ---------- */
 type VisaInfo = { summary: string; sources?: { title: string; url: string }[]; updatedAt?: string | null };
@@ -405,9 +406,9 @@ export default function Home() {
       </header>
 
       {/* 입력 영역 */}
-      <section className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-6 min-w-0">
+      <section className="mt-4 grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-6">
         {/* 나라 선택 */}
-        <div className="sm:col-span-2">
+        <div className="min-w-0 sm:col-span-2">
           <label className="text-sm">나라 선택</label>
           <select
             className="w-full rounded border p-2"
@@ -427,7 +428,7 @@ export default function Home() {
         </div>
 
         {/* 도시/공항 선택 */}
-        <div className="sm:col-span-2">
+        <div className="min-w-0 sm:col-span-2">
           <label className="text-sm">도시 / 국제공항</label>
           <select
             className="w-full rounded border p-2"
@@ -445,18 +446,18 @@ export default function Home() {
           </select>
         </div>
 
-        {/* 출국/귀국일 */}
-        <div className="sm:col-span-1">
-          <label className="text-sm">출국일</label>
-          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="ios-date-fix w-full max-w-full min-w-0 rounded-md border px-3 py-2 bg-white dark:bg-zinc-900" />
-        </div>
-        <div className="sm:col-span-1">
-          <label className="text-sm">귀국일</label>
-          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="ios-date-fix w-full max-w-full min-w-0 rounded-md border px-3 py-2 bg-white dark:bg-zinc-900" />
+        {/* 출국일 */}
+        <div className="min-w-0 sm:col-span-1">
+          <DateField label="출국일" value={from} onChange={setFrom} />
         </div>
 
-        {/* 조회 버튼 */}
-        <div className="sm:col-span-6 flex items-end justify-end">
+        {/* 귀국일 */}
+        <div className="min-w-0 sm:col-span-1">
+          <DateField label="귀국일" value={to} onChange={setTo} />
+        </div>
+
+        {/* 조회 버튼 (다음 줄 오른쪽 정렬) */}
+        <div className="sm:col-span-6 flex justify-end">
           <button onClick={fetchData} className="rounded bg-black px-4 py-2 text-white">조회</button>
         </div>
       </section>

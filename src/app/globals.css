@@ -25,30 +25,19 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* --- iOS Safari date input가 flex/grid에서 넘치는 문제 패치 --- */
+/* 데스크탑/파이어폭스 등에서 date 인풋이 수축하지 않도록 */
+.date-native {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-size: 16px; /* iOS 확대 방지(데스크탑에도 무해) */
+}
+
+/* iOS Safari 전용 보정(이미 넣었다면 중복 무관) */
 @supports (-webkit-touch-callout: none) {
-  /* 인풋 자체를 100% 박스 안으로 강제 */
-  .ios-date-fix {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    display: block;                 /* inline 요소의 폭 오차 방지 */
-    font-size: 16px;                /* iOS 자동 확대 방지 */
-    box-sizing: border-box;
-  }
-  /* 값 표시 구역이 길 때 말줄임 + 넘침 숨김 */
-  .ios-date-fix::-webkit-datetime-edit,
-  .ios-date-fix::-webkit-date-and-time-value,
-  .ios-date-fix::-webkit-datetime-edit-fields-wrapper {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
-    max-width: 100%;
-  }
-  /* 달력 아이콘 여백으로 인한 튀어나옴 방지(일부 기기) */
-  .ios-date-fix::-webkit-calendar-picker-indicator {
-    margin: 0;
-    padding: 0;
+  .date-native {
+    -webkit-appearance: none;
+            appearance: none;
   }
 }
