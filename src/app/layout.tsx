@@ -72,7 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <a className="underline" href="mailto:administrator@rvtwin.com">
                   administrator@rvtwin.com
                 </a>{' '}
-                <span className="opacity-60">(추후 contact@rvtwin.com 예정)</span>
+                <span className="opacity-60"></span>
               </div>
             </div>
           </footer>

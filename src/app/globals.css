@@ -24,3 +24,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* iOS Safari에서 date input이 flex 컨테이너에서 넘치는 문제 완화 */
+@supports (-webkit-touch-callout: none) {
+  input[type="date"]::-webkit-date-and-time-value {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
+
