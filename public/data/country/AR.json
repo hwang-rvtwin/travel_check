@@ -1,0 +1,53 @@
+{
+  "iso2": "AR",
+  "nameKo": "아르헨티나",
+  "nameEn": "Argentina",
+  "nameCn": "阿根廷",
+  "nameJp": "アルゼンチン",
+  "power": {
+    "plug": [
+      "C",
+      "I"
+    ],
+    "voltage": "220V",
+    "frequency": "50Hz"
+  },
+  "airline": [
+    "KE",
+    "AF",
+    "KL",
+    "TK",
+    "QR"
+  ],
+  "baggage": {
+    "links": [
+      {
+        "code": "KE",
+        "name": "Korean Air",
+        "url": "https://www.koreanair.com/kr/ko/airport/baggage"
+      },
+      {
+        "code": "AF",
+        "name": "Air France",
+        "url": "https://www.airfrance.kr/KR/en/common/prepare/bagages/baggages_airfrance.htm"
+      },
+      {
+        "code": "KL",
+        "name": "KLM",
+        "url": "https://www.klm.co.kr/information/baggage"
+      },
+      {
+        "code": "TK",
+        "name": "Turkish Airlines",
+        "url": "https://www.turkishairlines.com/en-int/any-questions/free-baggage/"
+      },
+      {
+        "code": "QR",
+        "name": "Qatar Airways",
+        "url": "https://www.qatarairways.com/en-kr/baggage.html"
+      }
+    ]
+  },
+  "updatedAt": "2025-08-21T15:47:19.137+09:00",
+  "_note": "항공사/수하물 링크는 수시 변경 가능 — 운영 중 확인/보정 필요"
+}

@@ -1,0 +1,58 @@
+{
+  "results": [
+    {
+      "id": 1151254,
+      "name": "Phuket",
+      "latitude": 7.89059,
+      "longitude": 98.3981,
+      "elevation": 28,
+      "feature_code": "PPLA",
+      "country_code": "TH",
+      "admin1_id": 1151253,
+      "admin2_id": 1151984,
+      "timezone": "Asia/Bangkok",
+      "population": 79308,
+      "country_id": 1605651,
+      "country": "Thailand",
+      "admin1": "Phuket",
+      "admin2": "Mueang Phuket"
+    },
+    {
+      "id": 10238087,
+      "name": "Phuket City",
+      "latitude": 7.87699,
+      "longitude": 98.38664,
+      "elevation": 7,
+      "feature_code": "PPLX",
+      "country_code": "TH",
+      "admin1_id": 1151253,
+      "admin2_id": 1151984,
+      "admin3_id": 12647842,
+      "timezone": "Asia/Bangkok",
+      "country_id": 1605651,
+      "country": "Thailand",
+      "admin1": "Phuket",
+      "admin2": "Mueang Phuket",
+      "admin3": "Talat Nuea"
+    },
+    {
+      "id": 6301157,
+      "name": "Phuket International Airport",
+      "latitude": 8.1132,
+      "longitude": 98.31687,
+      "elevation": 24,
+      "feature_code": "AIRP",
+      "country_code": "TH",
+      "admin1_id": 1151253,
+      "admin2_id": 1150295,
+      "admin3_id": 12643445,
+      "timezone": "Asia/Bangkok",
+      "country_id": 1605651,
+      "country": "Thailand",
+      "admin1": "Phuket",
+      "admin2": "Thalang",
+      "admin3": "Mai Khao"
+    }
+  ],
+  "generationtime_ms": 0.16653538
+}

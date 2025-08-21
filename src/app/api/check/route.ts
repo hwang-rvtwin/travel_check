@@ -1,157 +1,257 @@
 // src/app/api/check/route.ts
 export const runtime = 'nodejs';
 
-import { NextRequest } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 
-/* ---------- 타입 ---------- */
-type VisaSource = { title?: string; url: string };
-type VisaInfo = { summary: string; sources: VisaSource[]; updatedAt?: string };
-type PowerMeta = { plug: string[]; voltage: string; frequency: string; source?: string };
-type BaggageLink = { code: string; title: string; url: string };
-type CountryMeta = {
-  iso2?: string;
+/* ---------------- Types ---------------- */
+
+type AirlineCode = string;
+
+interface AirlineObj {
+  code?: string;
+  name?: string;
   nameKo?: string;
   nameEn?: string;
-  power: PowerMeta;
-  visa?: VisaInfo; // optional fallback in country file
-  baggage?: { links: BaggageLink[] };
+  url?: string;
+  baggageUrl?: string;
+}
+
+interface BaggageLink {
+  code?: string;
+  name?: string;
+  url?: string;
+}
+
+interface CountryJson {
+  iso2: string;
+  nameKo: string;
+  nameEn: string;
+  nameCn?: string;
+  nameJp?: string;
+  power?: {
+    plug?: string[];
+    plugTypes?: string[];
+    voltage?: string;
+    frequency?: string;
+  };
+  airlines?: Array<AirlineCode | AirlineObj>;
+  airline?: Array<AirlineCode | AirlineObj>;
+  baggage?: {
+    links?: BaggageLink[];
+  };
+  baggageLinks?: { title: string; url: string }[];
+}
+
+type VisaStatus = 'visa-free' | 'voa' | 'evisa' | 'eta' | 'esta' | 'visa-required';
+interface VisaEntry {
+  status: VisaStatus;
+  days: number | string;
+  notes?: string;
+  sources?: string[];
+  ref?: string;
+}
+interface VisaSnapshot {
   updatedAt?: string;
-};
-
-type ChecklistItem = { id: string; label: string; checked: boolean };
-function buildChecklist(): ChecklistItem[] {
-  return [
-    { id: 'passport', label: '여권 유효기간 6개월 이상', checked: false },
-    { id: 'visa', label: '비자/전자여행허가(해당 시)', checked: false },
-    { id: 'tickets', label: '왕복 항공권/호텔 바우처', checked: false },
-    { id: 'esim', label: 'eSIM 또는 로밍 준비', checked: false },
-    { id: 'power', label: '플러그 어댑터/보조배터리', checked: false },
-    { id: 'baggage', label: '수하물 규정 확인(기내/위탁)', checked: false },
-    { id: 'insurance', label: '여행자 보험(선택)', checked: false },
-    { id: 'cash', label: '현지 결제수단(카드/현금·환전)', checked: false }
-  ];
+  pairs: Record<string, VisaEntry>;
 }
 
-/* ---------- 유틸: 비자 요약 생성 ---------- */
-function makeVisaSummary(passport: string, country: string, rec: {
-  status: string; max_stay_days: number; conditions?: string[]; notes?: string;
-}): string {
-  const p = passport; const c = country;
-  const cond = rec.conditions?.length ? ` (${rec.conditions.join(', ')})` : '';
-  const days = rec.max_stay_days > 0 ? `${rec.max_stay_days}일` : '';
-  // status 별 템플릿
-  const s = rec.status.toLowerCase();
-  if (s.includes('visa-free')) {
-    return `한국 여권 소지자는 ${c} 입국 시 무비자 ${days} 체류가 가능합니다${cond}.`;
-  }
-  if (s.includes('vwp-esta') || s.includes('esta')) {
-    return `미국 방문은 VWP 대상이며 출발 전 ESTA 승인이 필요합니다. 최대 ${days || '90일'} 체류 가능합니다${cond}.`;
-  }
-  if (s.includes('nzeTA')) {
-    return `뉴질랜드 방문은 출발 전 NZeTA 발급이 필요하며 최대 ${days || '90일'} 체류 가능합니다${cond}.`;
-  }
-  if (s.includes('eta') && c === 'AU') {
-    return `호주 방문은 ETA(전자여행허가) 사전 승인이 필요하며 최대 ${days || '90일'} 체류 가능합니다${cond}.`;
-  }
-  if (s.includes('e-voa') || s.includes('voa') || s.includes('e-visa')) {
-    return `입국 시 전자비자/도착비자 제도가 적용되며 통상 최대 ${days || '30일'} 체류 가능합니다${cond}.`;
-  }
-  if (s.includes('schengen')) {
-    return `솅겐 규정에 따라 180일 중 최대 ${days || '90일'}까지 무비자 체류 가능합니다${cond}.`;
-  }
-  if (s.includes('visa-required')) {
-    return `일반적으로 사전 비자 발급이 필요합니다${cond}.`;
-  }
-  // fallback
-  return `비자/입국 규정은 사전에 확인이 필요합니다${cond}.`;
+interface VisaInfo {
+  summary: string;
+  sources?: { title: string; url: string }[];
+  updatedAt?: string | null;
 }
 
-function toSources(urls?: string[]): VisaSource[] {
-  return (urls || []).map((u) => ({ url: u }));
+interface ESIMDeal { name: string; go: string }
+interface PowerInfo { plugTypes: string[]; voltage: string; frequency: string; source: string }
+interface BaggageInfo { guide: string; airlineLinks: { title: string; url: string }[] }
+
+interface ApiResult {
+  country: string;      // ISO2
+  countryName: string;  // 표시용 국가명 (nameKo 우선)
+  passport: string;
+  from: string;
+  to: string;
+  visa: VisaInfo;
+  esim: { deals: ESIMDeal[] };
+  power: PowerInfo;
+  baggage: BaggageInfo;
+  checklist: { id: string; label: string; checked: boolean }[];
+  updatedAt: string | null;
 }
 
-/* ---------- 핸들러 ---------- */
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const country = (searchParams.get('country') || 'JP').toUpperCase(); // 목적지 ISO2
-  const passport = (searchParams.get('passport') || 'KR').toUpperCase();
-  const from = searchParams.get('from') || '';
-  const to = searchParams.get('to') || '';
+/* ---------------- Helpers ---------------- */
 
+let _visaCache: VisaSnapshot | null = null;
+async function loadVisaSnapshot(): Promise<VisaSnapshot> {
+  if (_visaCache) return _visaCache;
+  const p = path.join(process.cwd(), 'public', 'data', 'visa_snapshot.json');
+  const raw = await fs.readFile(p, 'utf8');
+  _visaCache = JSON.parse(raw) as VisaSnapshot;
+  return _visaCache;
+}
+
+function shortTitleFromUrl(u: string): string {
   try {
-    // 국가 메타(전압/수하물 링크 등)
-    const filePath = path.join(process.cwd(), 'public', 'data', 'country', `${country}.json`);
-    const raw = await fs.readFile(filePath, 'utf-8');
-    const meta = JSON.parse(raw) as CountryMeta;
+    const h = new URL(u).hostname.replace(/^www\./, '');
+    if (h.includes('boca.gov.tw')) return 'Taiwan BOCA';
+    if (h.includes('immd.gov.hk')) return 'HK Immigration';
+    if (h.includes('gov.uk')) return 'UK GOV';
+    if (h.includes('cbp.gov')) return 'U.S. CBP';
+    if (h.includes('homeaffairs.gov.au')) return 'Australia Home Affairs';
+    if (h.includes('immigration.govt.nz')) return 'NZ Immigration';
+    if (h.includes('mofa.go.kr')) return '대한민국 외교부';
+    return h;
+  } catch {
+    return '공식 안내';
+  }
+}
 
-    // 비자: 우선 /api/visa 에게 묻고 → 없으면 country 파일의 fallback 사용
-    let visaInfo: VisaInfo | undefined;
-    try {
-      const visaUrl = new URL('/api/visa', req.url);
-      visaUrl.searchParams.set('passport', passport);
-      visaUrl.searchParams.set('country', country);
-      const r = await fetch(visaUrl.toString(), { headers: { accept: 'application/json' } });
-      const j = await r.json();
-      if (j?.found && j.record) {
-        visaInfo = {
-          summary: makeVisaSummary(passport, country, j.record),
-          sources: toSources(j.record.sources),
-          updatedAt: j.updated_at
-        };
-      }
-    } catch {
-      // ignore & fallback
+function buildSummary(countryName: string, v: VisaEntry): string {
+  const d = v.days ? String(v.days) : '';
+  switch (v.status) {
+    case 'visa-free':
+      return `${countryName} ${d ? `${d}일` : ''} 무비자 체류가 가능합니다.${v.notes ? ' ' + v.notes : ''}`;
+    case 'voa':
+      return `${countryName} 입국 시 도착비자(VOA)${d ? `, 체류 ${d}일` : ''} 가능합니다.${v.notes ? ' ' + v.notes : ''}`;
+    case 'evisa':
+      return `${countryName} 입국에는 전자비자(e-Visa)가 필요합니다.${d ? ` (통상 ${d}일 체류)` : ''}${v.notes ? ' ' + v.notes : ''}`;
+    case 'eta':
+      return `${countryName} 입국에는 ETA(전자여행허가)가 필요합니다.${d ? ` (통상 ${d}일 체류)` : ''}${v.notes ? ' ' + v.notes : ''}`;
+    case 'esta':
+      return `${countryName}는 VWP 대상이며 ESTA 승인이 필요합니다.${d ? ` (무비자 ${d}일 체류)` : ''}${v.notes ? ' ' + v.notes : ''}`;
+    case 'visa-required':
+    default:
+      return `${countryName} 입국에는 사전 비자가 필요합니다.${v.notes ? ' ' + v.notes : ''}`;
+  }
+}
+
+async function composeVisa(passportISO2: string, countryISO2: string, countryName: string): Promise<VisaInfo> {
+  const snap = await loadVisaSnapshot();
+  const key = `${passportISO2.toUpperCase()}-${countryISO2.toUpperCase()}`;
+  let entry: VisaEntry | undefined = snap.pairs[key];
+  if (entry?.ref) entry = snap.pairs[entry.ref];
+
+  if (!entry) {
+    return {
+      summary:
+        '비자 요약 정보를 찾지 못했습니다. IATA Travel Centre 또는 해당국 대사관 공지에서 최신 정보를 확인하세요.',
+      sources: [
+        { title: 'IATA Travel Centre', url: 'https://www.iata.org/en/services/compliance/timatic/travel-documentation/' }
+      ],
+      updatedAt: snap.updatedAt ?? null
+    };
+  }
+
+  const summary = buildSummary(countryName, entry);
+  const sources = (entry.sources ?? []).map((url) => ({ title: shortTitleFromUrl(url), url }));
+
+  return { summary, sources, updatedAt: snap.updatedAt ?? null };
+}
+
+async function readCountryJson(iso2: string): Promise<CountryJson | null> {
+  const p = path.join(process.cwd(), 'public', 'data', 'country', `${iso2}.json`);
+  try {
+    const raw = await fs.readFile(p, 'utf8');
+    return JSON.parse(raw) as CountryJson;
+  } catch {
+    return null;
+  }
+}
+
+function normalizePower(cj: CountryJson | null): PowerInfo {
+  const plugTypes = cj?.power?.plugTypes ?? cj?.power?.plug ?? [];
+  return {
+    plugTypes: Array.isArray(plugTypes) ? plugTypes : [],
+    voltage: cj?.power?.voltage ?? '—',
+    frequency: cj?.power?.frequency ?? '—',
+    source: 'WorldStandards'
+  };
+}
+
+function normalizeBaggage(cj: CountryJson | null): BaggageInfo {
+  const out: BaggageInfo = {
+    guide:
+      '국제선 일반: 기내 7~10kg / 위탁 20~23kg(항공사·운임 유형에 따라 상이). 상세는 항공사 공식 페이지를 확인하세요.',
+    airlineLinks: []
+  };
+
+  // baggage.links 우선
+  const blist: BaggageLink[] = Array.isArray(cj?.baggage?.links) ? (cj!.baggage!.links as BaggageLink[]) : [];
+  for (const b of blist) {
+    if (b?.url) {
+      const code = (b.code ?? '').toUpperCase();
+      const name = b.name ?? code;
+      out.airlineLinks.push({ title: `${name}${code ? ` (${code})` : ''}`, url: b.url });
     }
+  }
 
-    if (!visaInfo) {
-      visaInfo = meta.visa ?? {
-        summary: '입국·비자 최신 규정은 IATA/정부·대사관 공지에서 확인하세요.',
-        sources: [{ url: 'https://www.iata.org/en/services/compliance/timatic/travel-documentation/' }]
-      };
+  // 그 다음 legacy baggageLinks
+  if (Array.isArray(cj?.baggageLinks)) {
+    for (const b of cj!.baggageLinks!) {
+      if (b?.title && b?.url) out.airlineLinks.push({ title: b.title, url: b.url });
     }
+  }
 
-    // eSIM (임시)
-    const esim = {
-      deals: [{ name: `Airalo ${country} eSIM`, go: `/go/airalo?country=${country}` }]
+  // airlines/airline 에 객체로 url 포함된 경우 추가
+  const airlines = Array.isArray(cj?.airlines) ? cj!.airlines! : Array.isArray(cj?.airline) ? cj!.airline! : [];
+  for (const item of airlines) {
+    if (typeof item === 'object' && (item?.url || item?.baggageUrl)) {
+      const code = (item.code ?? '').toUpperCase();
+      const nm = item.name ?? item.nameKo ?? item.nameEn ?? code;
+      const url = item.url ?? item.baggageUrl!;
+      out.airlineLinks.push({ title: `${nm}${code ? ` (${code})` : ''}`, url });
+    }
+  }
+
+  return out;
+}
+
+/* ---------------- Route Handler ---------------- */
+
+export async function GET(req: Request): Promise<Response> {
+  try {
+    const u = new URL(req.url);
+    const iso2 = (u.searchParams.get('country') || 'JP').toUpperCase();
+    const passport = (u.searchParams.get('passport') || 'KR').toUpperCase();
+    const from = u.searchParams.get('from') || '';
+    const to = u.searchParams.get('to') || '';
+
+    const countryJson = await readCountryJson(iso2);
+    const countryName = countryJson?.nameKo ?? countryJson?.nameEn ?? iso2;
+
+    const visa = await composeVisa(passport, iso2, countryName);
+    const power = normalizePower(countryJson);
+    const baggage = normalizeBaggage(countryJson);
+
+    const res: ApiResult = {
+      country: iso2,
+      countryName,
+      passport,
+      from,
+      to,
+      visa,
+      esim: {
+        deals: [{ name: `Airalo ${countryJson?.nameEn ?? iso2} eSIM`, go: `/go/airalo?country=${iso2}` }]
+      },
+      power,
+      baggage,
+      checklist: [
+        { id: 'p0', label: '여권 유효기간 6개월 이상', checked: false },
+        { id: 'p1', label: '비자/전자여행허가(해당 시)', checked: false },
+        { id: 'p2', label: 'eSIM 또는 로밍 준비', checked: false },
+        { id: 'p3', label: '플러그 어댑터/변환기', checked: false }
+      ],
+      updatedAt: null
     };
 
-    return new Response(
-      JSON.stringify(
-        {
-          country,
-          passport,
-          from,
-          to,
-          visa: visaInfo,
-          power: {
-            plugTypes: meta.power.plug,
-            voltage: meta.power.voltage,
-            frequency: meta.power.frequency,
-            source: meta.power.source ?? 'WorldStandards'
-          },
-          baggage: {
-            guide:
-              '국제선 일반: 기내 7~10kg / 위탁 20~23kg(항공사·운임 유형에 따라 상이). 상세는 항공사 공식 페이지를 확인하세요.',
-            airlineLinks: meta.baggage?.links ?? []
-          },
-          esim,
-          checklist: buildChecklist(),
-          updatedAt: meta.updatedAt ?? null
-        },
-        null,
-        2
-      ),
-      {
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          // 메타는 빈번히 변하지 않으니 중간 캐시 허용
-          'cache-control': 'public, s-maxage=86400, stale-while-revalidate=604800'
-        }
+    return new Response(JSON.stringify(res), {
+      headers: {
+        'content-type': 'application/json',
+        'cache-control': 's-maxage=300, stale-while-revalidate=60'
       }
-    );
+    });
   } catch {
-    return new Response(JSON.stringify({ error: 'unknown country' }), { status: 404 });
+    return new Response(JSON.stringify({ error: 'internal-error' }), { status: 500 });
   }
 }

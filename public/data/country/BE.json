@@ -1,0 +1,47 @@
+{
+  "iso2": "BE",
+  "nameKo": "벨기에",
+  "nameEn": "Belgium",
+  "nameCn": "比利时",
+  "nameJp": "ベルギー",
+  "power": {
+    "plug": [
+      "C",
+      "E"
+    ],
+    "voltage": "230V",
+    "frequency": "50Hz"
+  },
+  "airline": [
+    "KE",
+    "SN",
+    "AF",
+    "KL"
+  ],
+  "baggage": {
+    "links": [
+      {
+        "code": "KE",
+        "name": "Korean Air",
+        "url": "https://www.koreanair.com/kr/ko/airport/baggage"
+      },
+      {
+        "code": "SN",
+        "name": "Brussels Airlines",
+        "url": "https://www.brusselsairlines.com/en-kr/practical-information/travel-info/baggage"
+      },
+      {
+        "code": "AF",
+        "name": "Air France",
+        "url": "https://www.airfrance.kr/KR/en/common/prepare/bagages/baggages_airfrance.htm"
+      },
+      {
+        "code": "KL",
+        "name": "KLM",
+        "url": "https://www.klm.co.kr/information/baggage"
+      }
+    ]
+  },
+  "updatedAt": "2025-08-21T15:47:19.133+09:00",
+  "_note": "항공사/수하물 링크는 수시 변경 가능 — 운영 중 확인/보정 필요"
+}

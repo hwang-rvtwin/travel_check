@@ -1,0 +1,62 @@
+{
+  "results": [
+    {
+      "id": 1668341,
+      "name": "Taipei",
+      "latitude": 25.05306,
+      "longitude": 121.52639,
+      "elevation": 5,
+      "feature_code": "PPLC",
+      "country_code": "TW",
+      "admin1_id": 7280291,
+      "admin2_id": 1668338,
+      "timezone": "Asia/Taipei",
+      "population": 7871900,
+      "country_id": 1668284,
+      "country": "Taiwan",
+      "admin1": "Taiwan",
+      "admin2": "Taipei City"
+    },
+    {
+      "id": 1980019,
+      "name": "Taipei Songshan Airport",
+      "latitude": 25.06405,
+      "longitude": 121.55022,
+      "elevation": 5,
+      "feature_code": "AIRP",
+      "country_code": "TW",
+      "admin1_id": 7280291,
+      "admin2_id": 1668338,
+      "admin3_id": 1668680,
+      "admin4_id": 11701407,
+      "timezone": "Asia/Taipei",
+      "country_id": 1668284,
+      "country": "Taiwan",
+      "admin1": "Taiwan",
+      "admin2": "Taipei City",
+      "admin3": "Songshan",
+      "admin4": "Jingzhong"
+    },
+    {
+      "id": 11494157,
+      "name": "Taipei Veterans General Hospital Heliport",
+      "latitude": 25.12031,
+      "longitude": 121.52014,
+      "elevation": 32,
+      "feature_code": "AIRH",
+      "country_code": "TW",
+      "admin1_id": 7280291,
+      "admin2_id": 1668338,
+      "admin3_id": 1670691,
+      "admin4_id": 11701527,
+      "timezone": "Asia/Taipei",
+      "country_id": 1668284,
+      "country": "Taiwan",
+      "admin1": "Taiwan",
+      "admin2": "Taipei City",
+      "admin3": "Beitou",
+      "admin4": "Yongxin"
+    }
+  ],
+  "generationtime_ms": 0.7171631
+}

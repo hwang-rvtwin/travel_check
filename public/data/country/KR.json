@@ -2,37 +2,82 @@
   "iso2": "KR",
   "nameKo": "대한민국",
   "nameEn": "South Korea",
+  "nameCn": "韩国",
+  "nameJp": "韓国",
   "power": {
     "plug": [
       "C",
       "F"
     ],
     "voltage": "220V",
-    "frequency": "60Hz",
-    "source": "WorldStandards (recheck required)"
+    "frequency": "60Hz"
   },
-  "visa": {
-    "summary": "입국·비자 최신 규정은 IATA Travel Centre 및 해당국 정부/대사관 공지를 확인하세요.",
-    "sources": [
-      {
-        "title": "IATA Travel Centre",
-        "url": "https://www.iata.org/en/services/compliance/timatic/travel-documentation/"
-      }
-    ]
-  },
+  "airline": [
+    "KE",
+    "OZ",
+    "7C",
+    "LJ",
+    "TW",
+    "BX",
+    "RS",
+    "ZE",
+    "YP",
+    "RF"
+  ],
   "baggage": {
     "links": [
       {
         "code": "KE",
-        "title": "대한항공 수하물",
-        "url": "https://www.koreanair.com/contents/plan-your-travel/baggage"
+        "name": "Korean Air",
+        "url": "https://www.koreanair.com/kr/ko/airport/baggage"
       },
       {
         "code": "OZ",
-        "title": "아시아나항공 수하물",
+        "name": "Asiana Airlines",
         "url": "https://flyasiana.com/C/KR/KO/contents/user-guide"
+      },
+      {
+        "code": "7C",
+        "name": "Jeju Air",
+        "url": "https://www.jejuair.net/ko/additionalService/service/preorderedBaggage.do"
+      },
+      {
+        "code": "LJ",
+        "name": "Jin Air",
+        "url": "https://www.jinair.com/ready/carryBaggage"
+      },
+      {
+        "code": "TW",
+        "name": "T'way Air",
+        "url": "https://www.twayair.com/app/serviceInfo/contents/1148"
+      },
+      {
+        "code": "BX",
+        "name": "Air Busan",
+        "url": "https://www.airbusan.com/content/common/service/baggage/"
+      },
+      {
+        "code": "RS",
+        "name": "Air Seoul",
+        "url": "https://flyairseoul.com/CW/ko/destinations.do"
+      },
+      {
+        "code": "ZE",
+        "name": "Eastar Jet",
+        "url": "https://www.eastarjet.com/newstar/PGWIK00001?_gl=1*1rc6koi*_ga*NDU3Mjc1NTk2LjE3NTU3NDgyNTk.*_ga_3MJCE20ZX8*czE3NTU3NDgyNTkkbzEkZzEkdDE3NTU3NDgyODUkajM0JGwwJGgxODQwNTMwMDMy"
+      },
+      {
+        "code": "YP",
+        "name": "Air Premia",
+        "url": "https://www.airpremia.com/kr/ko/support/baggage/free-baggage"
+      },
+      {
+        "code": "RF",
+        "name": "Aero K",
+        "url": "https://www.aerok.com/ko-KR/travel-preparation/checked-baggage"
       }
     ]
   },
-  "updatedAt": "2025-08-19T15:49:15.074+09:00"
+  "updatedAt": "2025-08-21T15:47:19.116+09:00",
+  "_note": "항공사/수하물 링크는 수시 변경 가능 — 운영 중 확인/보정 필요"
 }

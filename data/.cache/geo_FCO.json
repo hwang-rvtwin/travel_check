@@ -1,0 +1,225 @@
+{
+  "results": [
+    {
+      "id": 3169070,
+      "name": "Rome",
+      "latitude": 41.89193,
+      "longitude": 12.51133,
+      "elevation": 20,
+      "feature_code": "PPLC",
+      "country_code": "IT",
+      "admin1_id": 3174976,
+      "admin2_id": 3169069,
+      "admin3_id": 3169071,
+      "timezone": "Europe/Rome",
+      "population": 2318895,
+      "postcodes": [
+        "00187"
+      ],
+      "country_id": 3175395,
+      "country": "Italy",
+      "admin1": "Lazio",
+      "admin2": "Rome",
+      "admin3": "Rome"
+    },
+    {
+      "id": 4219762,
+      "name": "Rome",
+      "latitude": 34.25704,
+      "longitude": -85.16467,
+      "elevation": 187,
+      "feature_code": "PPLA2",
+      "country_code": "US",
+      "admin1_id": 4197000,
+      "admin2_id": 4195536,
+      "timezone": "America/New_York",
+      "population": 36323,
+      "postcodes": [
+        "30161",
+        "30162",
+        "30163",
+        "30164",
+        "30165"
+      ],
+      "country_id": 6252001,
+      "country": "United States",
+      "admin1": "Georgia",
+      "admin2": "Floyd"
+    },
+    {
+      "id": 5134295,
+      "name": "Rome",
+      "latitude": 43.21285,
+      "longitude": -75.45573,
+      "elevation": 139,
+      "feature_code": "PPL",
+      "country_code": "US",
+      "admin1_id": 5128638,
+      "admin2_id": 5129832,
+      "admin3_id": 5134301,
+      "timezone": "America/New_York",
+      "population": 32573,
+      "postcodes": [
+        "13440",
+        "13441",
+        "13442",
+        "13449"
+      ],
+      "country_id": 6252001,
+      "country": "United States",
+      "admin1": "New York",
+      "admin2": "Oneida",
+      "admin3": "City of Rome"
+    },
+    {
+      "id": 4797174,
+      "name": "Alum Creek",
+      "latitude": 38.28676,
+      "longitude": -81.80513,
+      "elevation": 189,
+      "feature_code": "PPL",
+      "country_code": "US",
+      "admin1_id": 4826850,
+      "admin2_id": 4810630,
+      "timezone": "America/New_York",
+      "population": 1749,
+      "postcodes": [
+        "25003"
+      ],
+      "country_id": 6252001,
+      "country": "United States",
+      "admin1": "West Virginia",
+      "admin2": "Kanawha"
+    },
+    {
+      "id": 4908066,
+      "name": "Rome",
+      "latitude": 40.88309,
+      "longitude": -89.50259,
+      "elevation": 142,
+      "feature_code": "PPL",
+      "country_code": "US",
+      "admin1_id": 4896861,
+      "admin2_id": 4905697,
+      "admin3_id": 4887585,
+      "timezone": "America/Chicago",
+      "population": 1738,
+      "postcodes": [
+        "61562"
+      ],
+      "country_id": 6252001,
+      "country": "United States",
+      "admin1": "Illinois",
+      "admin2": "Peoria",
+      "admin3": "Chillicothe Township"
+    },
+    {
+      "id": 4722533,
+      "name": "Rhome",
+      "latitude": 33.05346,
+      "longitude": -97.47197,
+      "elevation": 287,
+      "feature_code": "PPL",
+      "country_code": "US",
+      "admin1_id": 4736286,
+      "admin2_id": 4742676,
+      "timezone": "America/Chicago",
+      "population": 1630,
+      "postcodes": [
+        "76078"
+      ],
+      "country_id": 6252001,
+      "country": "United States",
+      "admin1": "Texas",
+      "admin2": "Wise"
+    },
+    {
+      "id": 4237085,
+      "name": "Dix",
+      "latitude": 38.44172,
+      "longitude": -88.93756,
+      "elevation": 183,
+      "feature_code": "PPL",
+      "country_code": "US",
+      "admin1_id": 4896861,
+      "admin2_id": 4241773,
+      "admin3_id": 4248411,
+      "timezone": "America/Chicago",
+      "population": 457,
+      "postcodes": [
+        "62830"
+      ],
+      "country_id": 6252001,
+      "country": "United States",
+      "admin1": "Illinois",
+      "admin2": "Jefferson",
+      "admin3": "Rome Township"
+    },
+    {
+      "id": 5208923,
+      "name": "Rome",
+      "latitude": 41.85841,
+      "longitude": -76.34077,
+      "elevation": 249,
+      "feature_code": "PPL",
+      "country_code": "US",
+      "admin1_id": 6254927,
+      "admin2_id": 5181416,
+      "admin3_id": 5208926,
+      "timezone": "America/New_York",
+      "population": 418,
+      "postcodes": [
+        "18837"
+      ],
+      "country_id": 6252001,
+      "country": "United States",
+      "admin1": "Pennsylvania",
+      "admin2": "Bradford",
+      "admin3": "Borough of Rome"
+    },
+    {
+      "id": 4873535,
+      "name": "Rome",
+      "latitude": 40.98141,
+      "longitude": -91.68239,
+      "elevation": 182,
+      "feature_code": "PPL",
+      "country_code": "US",
+      "admin1_id": 4862182,
+      "admin2_id": 4860353,
+      "admin3_id": 4878639,
+      "timezone": "America/Chicago",
+      "population": 117,
+      "postcodes": [
+        "52642"
+      ],
+      "country_id": 6252001,
+      "country": "United States",
+      "admin1": "Iowa",
+      "admin2": "Henry",
+      "admin3": "Tippecanoe Township"
+    },
+    {
+      "id": 4048394,
+      "name": "Rome",
+      "latitude": 37.92339,
+      "longitude": -86.52359,
+      "elevation": 125,
+      "feature_code": "PPL",
+      "country_code": "US",
+      "admin1_id": 4921868,
+      "admin2_id": 4262934,
+      "admin3_id": 4265869,
+      "timezone": "America/Indiana/Tell_City",
+      "postcodes": [
+        "47574"
+      ],
+      "country_id": 6252001,
+      "country": "United States",
+      "admin1": "Indiana",
+      "admin2": "Perry",
+      "admin3": "Township of Tobin"
+    }
+  ],
+  "generationtime_ms": 1.1250973
+}

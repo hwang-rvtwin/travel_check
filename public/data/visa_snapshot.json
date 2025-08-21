@@ -1,215 +1,253 @@
 {
-  "updated_at": "2025-08-19",
-  "passport": "KR",
-  "KR-JP": {
-    "status": "visa-free",
-    "max_stay_days": 90,
-    "conditions": ["무비자 단기 체류(관광/상용)", "입국 심사관 재량", "왕복/제3국 항공권 권장"],
-    "notes": "",
-    "sources": ["https://www.mofa.go.jp/j_info/visit/visa/short/novisa.html"]
-  },
-  "KR-US": {
-    "status": "VWP-ESTA",
-    "max_stay_days": 90,
-    "conditions": ["미국 VWP 대상", "출발 전 ESTA 승인 필요", "체류 연장/변경 불가"],
-    "notes": "Guam/CNMI는 별도 45일 G-CNMI 프로그램(ETA) 사용 가능.",
-    "sources": [
-      "https://www.cbp.gov/travel/international-visitors/visa-waiver-program",
-      "https://travel.state.gov/content/travel/en/us-visas/tourism-visit/visa-waiver-program.html",
-      "https://g-cnmi-eta.cbp.dhs.gov/"
-    ]
-  },
-  "KR-SG": {
-    "status": "visa-free",
-    "max_stay_days": 90,
-    "conditions": ["사전 전자 입국신고(SG Arrival Card) 권장"],
-    "notes": "",
-    "sources": ["https://www.mfa.gov.sg/Overseas-Mission/Seoul/Consular-Services/Visa-Information"]
-  },
-  "KR-TH": {
-    "status": "visa-free",
-    "max_stay_days": 90,
-    "conditions": ["관광·상용 단기", "입국 심사관 재량"],
-    "notes": "대한민국은 태국과 상호 90일 무사증 협정(공관 공지 기준).",
-    "sources": ["https://www.thaiembassynz.org.nz/visa-exemption-and-bilateral-agreements"]
-  },
-  "KR-VN": {
-    "status": "visa-free",
-    "max_stay_days": 45,
-    "conditions": ["단기 관광·방문", "입국 시점 기준 45일"],
-    "notes": "장기 체류·복수입국은 e-visa 고려.",
-    "sources": ["https://vietnam.travel/plan-your-trip/visa-requirements"]
-  },
-  "KR-MY": {
-    "status": "visa-free",
-    "max_stay_days": 90,
-    "conditions": [],
-    "notes": "",
-    "sources": ["https://www.kln.gov.my/files/uploads/190401-VisaRequirement-NonDiplomatic.pdf"]
-  },
-  "KR-ID": {
-    "status": "e-VOA/VOA",
-    "max_stay_days": 30,
-    "conditions": ["도착비자 또는 e-VOA", "1회 30일 연장 가능(+30일)"],
-    "notes": "공식 e-VOA 포털 사전 발급 권장.",
-    "sources": [
-      "https://evisa.imigrasi.go.id/front/info/evoa",
-      "https://consular.embassyofindonesia.org/visa/genv/VOA/getstarted.html"
-    ]
-  },
-  "KR-PH": {
-    "status": "visa-free",
-    "max_stay_days": 30,
-    "conditions": ["왕복/제3국 항공권 권장"],
-    "notes": "",
-    "sources": ["https://dfaphilippines.qleap.ph/guide/visa-free"]
-  },
-  "KR-HK": {
-    "status": "visa-free",
-    "max_stay_days": 90,
-    "conditions": [],
-    "notes": "",
-    "sources": ["https://www.visaforchina.cn/BUS3_EN/tongzhigonggao/204127115048783872.html"]
-  },
-  "KR-TW": {
-    "status": "visa-free",
-    "max_stay_days": 90,
-    "conditions": [],
-    "notes": "",
-    "sources": ["https://www.boca.gov.tw/cp-149-4486-7785a-2.html"]
-  },
-  "KR-CN": {
-    "status": "visa-free",
-    "max_stay_days": 30,
-    "conditions": [
-        "단기 목적: 관광·상용·친지방문·교류·환승",
-        "입국 심사관 재량(왕복/제3국 항공권 권장)",
-        "현지 숙소 신고 등 체류 규정 준수"
-    ],
-    "notes": "중국의 일방적 무비자 정책으로 변경될 수 있음. 취업·유학·취재 등은 사전 비자 필요.",
-    "sources": [
-        "https://www.visaforchina.cn/DEL3_EN/tongzhigonggao/327343163872251904.html"
-    ]
-  },
-  "KR-AE": {
-    "status": "visa-on-arrival/visa-free",
-    "max_stay_days": 90,
-    "conditions": ["여권 소지자 무사증 상호면제 MOU 근거", "입국심사 재량"],
-    "notes": "UAE 공식 포털의 30/90일 체류안내가 병기되어 있어, 항공사/공식 포털에서 최신 체류일수 재확인 권장.",
-    "sources": [
-      "https://u.ae/en/information-and-services/visa-and-emirates-id/do-you-need-an-entry-permit-or-a-visa-to-enter-the-uae/visa-on-arrival",
-      "https://overseas.mofa.go.kr/ae-en/brd/m_11004/view.do?seq=747066"
-    ]
-  },
-  "KR-TR": {
-    "status": "visa-free",
-    "max_stay_days": 90,
-    "conditions": ["180일 중 90일"],
-    "notes": "",
-    "sources": ["https://www.mfa.gov.tr/visa-information-for-foreigners.en.mfa"]
-  },
-  "KR-SA": {
-    "status": "e-visa/visa-on-arrival",
-    "max_stay_days": 90,
-    "conditions": ["온라인 eVisa 권장(1년 복수, 방문마다 최대 90일)"],
-    "notes": "성지순례(하즈)는 별도 규정.",
-    "sources": [
-      "https://visa.visitsaudi.com/",
-      "https://www.visitsaudi.com/en/plan-your-trip/visa-regulations"
-    ]
-  },
-  "KR-GB": {
-    "status": "visa-free",
-    "max_stay_days": 180,
-    "conditions": ["관광·친지방문 등 Standard Visitor", "향후 ETA 확대 시행 계획 공지 참고"],
-    "notes": "ETA 확대 일정은 점진 도입—출발 전 GOV.UK 재확인 권장.",
-    "sources": ["https://www.gov.uk/government/publications/electronic-travel-authorisation-eta-factsheet"]
-  },
-  "KR-FR": {
-    "status": "visa-free (Schengen)",
-    "max_stay_days": 90,
-    "conditions": ["180일 중 90일(솅겐 전체 합산)"],
-    "notes": "솅겐 내 다른 회원국 체류일수 합산.",
-    "sources": ["https://eur-lex.europa.eu/EN/legal-content/glossary/annex-ii-visa-regulation.html"]
-  },
-  "KR-DE": {
-    "status": "visa-free (Schengen)",
-    "max_stay_days": 90,
-    "conditions": ["180일 중 90일 합산"],
-    "notes": "",
-    "sources": ["https://eur-lex.europa.eu/EN/legal-content/glossary/annex-ii-visa-regulation.html"]
-  },
-  "KR-ES": {
-    "status": "visa-free (Schengen)",
-    "max_stay_days": 90,
-    "conditions": ["180일 중 90일 합산"],
-    "notes": "",
-    "sources": ["https://eur-lex.europa.eu/EN/legal-content/glossary/annex-ii-visa-regulation.html"]
-  },
-  "KR-IT": {
-    "status": "visa-free (Schengen)",
-    "max_stay_days": 90,
-    "conditions": ["180일 중 90일 합산"],
-    "notes": "",
-    "sources": ["https://eur-lex.europa.eu/EN/legal-content/glossary/annex-ii-visa-regulation.html"]
-  },
-  "KR-NL": {
-    "status": "visa-free (Schengen)",
-    "max_stay_days": 90,
-    "conditions": ["180일 중 90일 합산"],
-    "notes": "",
-    "sources": ["https://eur-lex.europa.eu/EN/legal-content/glossary/annex-ii-visa-regulation.html"]
-  },
-  "KR-CH": {
-    "status": "visa-free (Schengen area rules)",
-    "max_stay_days": 90,
-    "conditions": ["180일 중 90일 합산"],
-    "notes": "스위스는 솅겐 회원국(비EU) — 솅겐 규정 동일 적용.",
-    "sources": ["https://eur-lex.europa.eu/EN/legal-content/glossary/annex-ii-visa-regulation.html"]
-  },
-  "KR-AU": {
-    "status": "ETA",
-    "max_stay_days": 90,
-    "conditions": ["ETA(601) 앱/온라인 사전 승인 필요", "입국 시 건강·자금 질문 가능"],
-    "notes": "",
-    "sources": ["https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/evisitor-651"]
-  },
-  "KR-NZ": {
-    "status": "NZeTA",
-    "max_stay_days": 90,
-    "conditions": ["출발 전 NZeTA 필요", "IVL 납부"],
-    "notes": "",
-    "sources": ["https://www.immigration.govt.nz/new-zealand-visas/preparing-a-visa-application/visa-factsheets/nzeta"]
-  },
-  "KR-CA": {
-    "status": "eTA",
-    "max_stay_days": 180,
-    "conditions": ["항공 입국 시 eTA 필요", "육·해로 입국 시 불요(비자면제 대상)"],
-    "notes": "일반적으로 최대 6개월 체류 허가.",
-    "sources": [
-      "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/entry-requirements-country.html",
-      "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/eta.html"
-    ]
-  },
-  "KR-GU": {
-    "status": "VWP-ESTA (대안: G-CNMI ETA)",
-    "max_stay_days": 90,
-    "conditions": ["ESTA로 90일, 또는 G-CNMI ETA로 45일"],
-    "notes": "직항·여정에 따라 둘 중 선택. 항공사 요건 확인.",
-    "sources": [
-      "https://www.cbp.gov/travel/international-visitors/visa-waiver-program",
-      "https://www.dhs.gov/visa-waiver-program-and-guam-cnmi-visa-waiver-program",
-      "https://g-cnmi-eta.cbp.dhs.gov/"
-    ]
-  },
-  "KR-MP": {
-    "status": "G-CNMI ETA",
-    "max_stay_days": 45,
-    "conditions": ["사전 G-CNMI ETA 권장", "타 미 본토 이동 불가(프로그램 한정)"],
-    "notes": "ESTA로 90일 입국 경로도 가능(미 본토 포함 여정).",
-    "sources": [
-      "https://www.dhs.gov/visa-waiver-program-and-guam-cnmi-visa-waiver-program",
-      "https://g-cnmi-eta.cbp.dhs.gov/"
-    ]
+  "updatedAt": "2025-08-21",
+  "pairs": {
+    "KR-JP": {
+      "status": "visa-free",
+      "days": 90,
+      "notes": "단기 체류(관광·상용 등) 90일 무비자. 입국 시 여권 유효기간·귀국편 증빙 등 요구 가능.",
+      "sources": ["https://www.mofa.go.jp/j_info/visit/visa/short/novisa.html"]
+    },
+    "KR-CN": {
+      "status": "visa-free",
+      "days": 15,
+      "notes": "중국의 한시적 무비자 조치 대상. 관광·상용·친지방문·환승 등 단기 체류 최대 15일. 정책 종료·연장 여부 수시 확인 권장.",
+      "sources": ["https://www.visaforchina.cn/globle/News_Detail?newsId=10013", "https://www.china-briefing.com/news/china-expands-visa-free-entry-to-30-days-for-more-countries/"]
+    },
+    "KR-HK": {
+      "status": "visa-free",
+      "days": 90,
+      "notes": "홍콩 입경 90일 무비자.",
+      "sources": ["https://www.immd.gov.hk/eng/services/visas/visit-transit/visit-visa-entry-permit.html"]
+    },
+    "KR-MO": {
+      "status": "visa-free",
+      "days": 90,
+      "notes": "마카오 입경 90일 무비자.",
+      "sources": ["https://www.gov.mo/en/services/ps-1474/ps-1474a/"]
+    },
+    "KR-TW": {
+      "status": "visa-free",
+      "days": 90,
+      "notes": "대만 90일 무비자. 전자입국카드 온라인 작성 권장.",
+      "sources": ["https://www.boca.gov.tw/cp-149-4486-7785a-2.html"]
+    },
+    "KR-SG": {
+      "status": "visa-free",
+      "days": 90,
+      "notes": "싱가포르 90일 무비자. 입국카드(SGAC) 사전 제출 권장.",
+      "sources": ["https://www.ica.gov.sg/enter-transit-depart/entering-singapore"]
+    },
+    "KR-MY": {
+      "status": "visa-free",
+      "days": 90,
+      "notes": "말레이시아 90일 무비자.",
+      "sources": ["https://www.imi.gov.my/index.php/en/main-services/visa/visa-requirement-by-country/"]
+    },
+    "KR-TH": {
+      "status": "visa-free",
+      "days": 90,
+      "notes": "태국과의 상호 무비자(대한민국 여권) 90일. 입국조건·체류 목적 단속 강화에 유의.",
+      "sources": ["https://www.thaiembassy.org/"]
+    },
+    "KR-VN": {
+      "status": "visa-free",
+      "days": 45,
+      "notes": "베트남 45일 무비자(단기). 더 긴 체류는 e-visa 신청.",
+      "sources": ["https://evisa.xuatnhapcanh.gov.vn/vi_VN/web/guest/trang-chu"]
+    },
+    "KR-ID": {
+      "status": "voa",
+      "days": 30,
+      "notes": "인도네시아 무비자 중단. 도착비자(VOA) 또는 e-VOA(30일, 1회 연장 가능) 필요.",
+      "sources": ["https://www.imigrasi.go.id/en/permohonan-e-voa/"]
+    },
+    "KR-PH": {
+      "status": "visa-free",
+      "days": 30,
+      "notes": "필리핀 30일 무비자(왕복 항공권·체류경비 증빙 요구 가능).",
+      "sources": ["https://immigration.gov.ph/Visa%20Requirement"]
+    },
+
+    "KR-US": {
+      "status": "esta",
+      "days": 90,
+      "notes": "미국 비자면제프로그램(VWP) 대상. ESTA 승인 후 무비자 90일.",
+      "sources": ["https://www.cbp.gov/travel/international-visitors/esta"]
+    },
+    "KR-CA": {
+      "status": "eta",
+      "days": 180,
+      "notes": "캐나다 항공 입국 시 eTA 필요. 보통 최대 6개월 체류 허용(입국 심사관 재량).",
+      "sources": ["https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/eta.html"]
+    },
+    "KR-MX": {
+      "status": "visa-free",
+      "days": 180,
+      "notes": "멕시코 무비자 최대 180일(입국 심사관 재량).",
+      "sources": ["https://www.gob.mx/inm"]
+    },
+
+    "KR-GB": {
+      "status": "eta",
+      "days": 180,
+      "notes": "영국 관광·단기 방문 6개월 무비자이지만 **사전 ETA 승인** 필요(정책 전면 시행).",
+      "sources": ["https://www.gov.uk/guidance/check-when-you-can-get-an-electronic-travel-authorisation-eta"]
+    },
+
+    "KR-AU": {
+      "status": "eta",
+      "days": 90,
+      "notes": "호주 ETA/eVisitor 전자허가 필요. 12개월 유효, 입국 시마다 최대 3개월 체류.",
+      "sources": ["https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/electronic-travel-authority-601", "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/evisitor-651"]
+    },
+    "KR-NZ": {
+      "status": "eta",
+      "days": 90,
+      "notes": "뉴질랜드 NZeTA 필요(관광세 별도). 일반적으로 3개월 체류.",
+      "sources": ["https://www.immigration.govt.nz/new-zealand-visas"]
+    },
+
+    "KR-AE": {
+      "status": "voa",
+      "days": 90,
+      "notes": "UAE 도착비자(국적별 30/90일 체류). 한국 여권은 다회입국 90일(6개월 내 총 90일)이 일반적.",
+      "sources": ["https://www.emirates.com/kr/english/before-you-fly/visa-passport-information/uae-visa-information/"]
+    },
+    "KR-QA": {
+      "status": "voa",
+      "days": 90,
+      "notes": "카타르 무비자/도착허가(국적별). 한국 여권 보통 30~90일 체류 허용.",
+      "sources": ["https://www.visitqatar.com/intl-en/practical-info/visas"]
+    },
+    "KR-SA": {
+      "status": "evisa",
+      "days": 90,
+      "notes": "사우디 관광 e-Visa 가능(다회입국, 1회 최대 90일 체류·유효 1년).",
+      "sources": ["https://visa.mofa.gov.sa/"]
+    },
+    "KR-TR": {
+      "status": "visa-free",
+      "days": "90/180",
+      "notes": "튀르키예 180일 중 90일 무비자.",
+      "sources": ["https://www.mfa.gov.tr/visa-information-for-foreigners.en.mfa"]
+    },
+
+    "KR-EU-SCHENGEN": {
+      "status": "visa-free",
+      "days": "90/180",
+      "notes": "셍겐지역(프/독/이/스/네/포/그/스웨덴/덴마크/핀란드/체코/폴란드/오스트리아/스위스/노르웨이 등) 180일 중 90일 무비자. ETIAS는 ‘시행시’ 사전 승인 필요.",
+      "sources": ["https://www.consilium.europa.eu/en/infographics/eu-visa-agreements-with-non-eu-countries/", "https://etias.com/etias-requirements/etias-for-south-korean-citizens"]
+    },
+
+    "KR-FR": { "ref": "KR-EU-SCHENGEN" },
+    "KR-DE": { "ref": "KR-EU-SCHENGEN" },
+    "KR-IT": { "ref": "KR-EU-SCHENGEN" },
+    "KR-ES": { "ref": "KR-EU-SCHENGEN" },
+    "KR-NL": { "ref": "KR-EU-SCHENGEN" },
+    "KR-PT": { "ref": "KR-EU-SCHENGEN" },
+    "KR-GR": { "ref": "KR-EU-SCHENGEN" },
+    "KR-CH": { "ref": "KR-EU-SCHENGEN" },
+    "KR-AT": { "ref": "KR-EU-SCHENGEN" },
+    "KR-CZ": { "ref": "KR-EU-SCHENGEN" },
+    "KR-PL": { "ref": "KR-EU-SCHENGEN" },
+    "KR-SE": { "ref": "KR-EU-SCHENGEN" },
+    "KR-NO": { "ref": "KR-EU-SCHENGEN" },
+    "KR-DK": { "ref": "KR-EU-SCHENGEN" },
+    "KR-FI": { "ref": "KR-EU-SCHENGEN" },
+    "KR-IE": {
+      "status": "visa-free",
+      "days": 90,
+      "notes": "아일랜드(셍겐 미가입) 90일 무비자.",
+      "sources": ["https://www.irishimmigration.ie/coming-to-visit-ireland/"]
+    },
+    "KR-BE": { "ref": "KR-EU-SCHENGEN" },
+
+    "KR-AZ": {
+      "status": "evisa",
+      "days": 30,
+      "notes": "아제르바이잔 전자비자(e-visa) 30일.",
+      "sources": ["https://evisa.gov.az/en/"]
+    },
+    "KR-KZ": {
+      "status": "visa-free",
+      "days": 30,
+      "notes": "카자흐스탄 30일 무비자.",
+      "sources": ["https://www.gov.kz/memleket/entities/mfa?lang=en"]
+    },
+    "KR-UZ": {
+      "status": "visa-free",
+      "days": 30,
+      "notes": "우즈베키스탄 30일 무비자.",
+      "sources": ["https://mfa.uz/en/consular/visa/"]
+    },
+
+    "KR-AF": { "status": "visa-required", "days": 0, "notes": "사전 비자 필요·안전 상황 상시 확인.", "sources": ["https://www.mofa.go.kr/"] },
+    "KR-IN": {
+      "status": "evisa",
+      "days": 90,
+      "notes": "인도 e-Visa(관광 등) 가능. 입국 항구 제한 주의.",
+      "sources": ["https://indianvisaonline.gov.in/evisa/"]
+    },
+    "KR-LK": {
+      "status": "eta",
+      "days": 30,
+      "notes": "스리랑카 ETA 필요(연장 가능).",
+      "sources": ["https://eta.gov.lk/slvisa/"]
+    },
+    "KR-NP": {
+      "status": "voa",
+      "days": 90,
+      "notes": "네팔 도착비자(관광) 가능(30/90일 등 유형 선택).",
+      "sources": ["https://www.immigration.gov.np/page/tourist-visa"]
+    },
+    "KR-MM": {
+      "status": "evisa",
+      "days": 28,
+      "notes": "미얀마 eVisa(관광) 28일. 정세·공지 수시 확인.",
+      "sources": ["https://evisa.moip.gov.mm/"]
+    },
+    "KR-JO": {
+      "status": "voa",
+      "days": 30,
+      "notes": "요르단 도착비자 가능(아카바 특구 등 조건 시 무료). e-visa 사전 발급 권장.",
+      "sources": ["https://moi.gov.jo/EN/Pages/Visa_Information"]
+    },
+    "KR-MV": {
+      "status": "voa",
+      "days": 30,
+      "notes": "몰디브 VOA 30일(무료, 연장 가능).",
+      "sources": ["https://immigration.gov.mv/tourist-visa/"]
+    },
+
+    "KR-EG": {
+      "status": "evisa",
+      "days": 30,
+      "notes": "이집트 e-Visa 또는 VOA 가능.",
+      "sources": ["https://www.visa2egypt.gov.eg/"]
+    },
+    "KR-MA": {
+      "status": "visa-free",
+      "days": 90,
+      "notes": "모로코 90일 무비자.",
+      "sources": ["https://www.consulat.ma/en/visa"]
+    },
+    "KR-ZA": {
+      "status": "visa-free",
+      "days": 30,
+      "notes": "남아공 30일 무비자.",
+      "sources": ["https://www.dha.gov.za/index.php/immigration-services/exempt-countries"]
+    },
+    "KR-KE": {
+      "status": "evisa",
+      "days": 90,
+      "notes": "케냐 eVisa(전자 입국허가) 필요.",
+      "sources": ["https://evisa.go.ke/evisa.html"]
+    },
+    "KR-ET": {
+      "status": "evisa",
+      "days": 30,
+      "notes": "에티오피아 eVisa 필요(공항 제한).",
+      "sources": ["https://www.evisa.gov.et/"]
+    }
   }
 }

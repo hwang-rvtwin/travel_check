@@ -2,6 +2,8 @@
   "iso2": "CN",
   "nameKo": "중국",
   "nameEn": "China",
+  "nameCn": "中国",
+  "nameJp": "中国",
   "power": {
     "plug": [
       "A",
@@ -9,31 +11,56 @@
       "I"
     ],
     "voltage": "220V",
-    "frequency": "50Hz",
-    "source": "WorldStandards (recheck required)"
+    "frequency": "50Hz"
   },
-  "visa": {
-    "summary": "입국·비자 최신 규정은 IATA Travel Centre 및 해당국 정부/대사관 공지를 확인하세요.",
-    "sources": [
-      {
-        "title": "IATA Travel Centre",
-        "url": "https://www.iata.org/en/services/compliance/timatic/travel-documentation/"
-      }
-    ]
-  },
+  "airline": [
+    "KE",
+    "OZ",
+    "CA",
+    "CZ",
+    "MU",
+    "HU",
+    "MF"
+  ],
   "baggage": {
     "links": [
       {
         "code": "KE",
-        "title": "대한항공 수하물",
-        "url": "https://www.koreanair.com/contents/plan-your-travel/baggage"
+        "name": "Korean Air",
+        "url": "https://www.koreanair.com/kr/ko/airport/baggage"
       },
       {
         "code": "OZ",
-        "title": "아시아나항공 수하물",
+        "name": "Asiana Airlines",
         "url": "https://flyasiana.com/C/KR/KO/contents/user-guide"
+      },
+      {
+        "code": "CA",
+        "name": "Air China",
+        "url": "https://www.airchina.us/US/GB/info/checked-baggage"
+      },
+      {
+        "code": "CZ",
+        "name": "China Southern",
+        "url": "https://www.csair.com/en/tourguide/luggage_service/"
+      },
+      {
+        "code": "MU",
+        "name": "China Eastern",
+        "url": "https://www.ceair.com/global/en_USD/Announcement/BaggageService/FreeBaggageAllowanceandSpecifications/"
+      },
+      {
+        "code": "HU",
+        "name": "Hainan Airlines",
+        "url": "https://www.hainanairlines.com/HUPortal/dyn/portal/DisplayPage?LANGUAGE=US&COUNTRY_SITE=US&SITE=CBHZCBHZ&PAGE=TYXL"
+      },
+      {
+        "code": "MF",
+        "name": "XiamenAir",
+        "url": "https://www.xiamenair.com/en-us/article-detail?articleLink=%2Fcms-i18n-ow%2Fcms-en-us%2Fchannels%2F10655.json"
       }
     ]
   },
-  "updatedAt": "2025-08-19T15:49:15.074+09:00"
+  "updatedAt": "2025-08-21T15:47:19.120+09:00",
+  "_note": "항공사/수하물 링크는 수시 변경 가능 — 운영 중 확인/보정 필요"
 }

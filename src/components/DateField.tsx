@@ -52,33 +52,34 @@ export default function DateField({label, value, onChange, min, max, className =
   };
 
   return (
-    <div className={`min-w-0 ${className}`} ref={wrapperRef}>
+    <div className={`relative min-w-0 ${className}`} ref={wrapperRef}>
       <label className="mb-1 block text-sm opacity-80">{label}</label>
 
-      {/* 트리거 인풋 (readOnly, 줌 방지 16px) */}
+      {/* 트리거 (readOnly 느낌의 버튼) */}
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="h-10 w-full rounded-md border bg-white px-3 text-left text-[16px]
-                   dark:bg-zinc-900"
+        onClick={() => setOpen(v => !v)}
+        className="h-10 w-full rounded-md border bg-white px-3 text-left text-[16px] dark:bg-zinc-900"
         aria-haspopup="dialog"
         aria-expanded={open}
       >
         {selected ? toISODate(selected) : <span className="opacity-60">연-월-일</span>}
       </button>
 
-      {/* 팝업 캘린더 (모바일: 풀스크린 모달, 데스크탑: 드롭다운) */}
+      {/* 팝업 캘린더 : 모바일 fixed 모달 / 데스크탑 absolute 드롭다운 */}
       {open && (
         <>
           {/* 모바일 백드롭 */}
-          <div className="fixed inset-0 z-40 block bg-black/30 sm:hidden" onClick={() => setOpen(false)} />
+          <div
+            className="fixed inset-0 z-40 bg-black/30 sm:hidden"
+            onClick={() => setOpen(false)}
+          />
 
           <div
             className="
-              z-50 mt-2 rounded-md border bg-white p-2 shadow-lg dark:bg-zinc-900
-              sm:absolute sm:w-[22rem]
-              sm:block
-              fixed left-1/2 top-1/2 w-[min(92vw,24rem)] -translate-x-1/2 -translate-y-1/2 sm:static sm:translate-x-0 sm:translate-y-0
+              z-50 rounded-md border bg-white p-2 shadow-lg dark:bg-zinc-900
+              fixed left-1/2 top-1/2 w-[min(92vw,24rem)] -translate-x-1/2 -translate-y-1/2
+              sm:absolute sm:left-0 sm:top-full sm:mt-2 sm:w-[22rem] sm:translate-x-0 sm:translate-y-0
             "
           >
             <DayPicker
@@ -90,10 +91,11 @@ export default function DateField({label, value, onChange, min, max, className =
               toDate={toDate}
               captionLayout="dropdown"
               styles={{
-                caption: {padding: '0.25rem 0.25rem 0'},
-                caption_dropdowns: {gap: '0.25rem'},
+                caption: { padding: '0.25rem 0.25rem 0' },
+                caption_dropdowns: { gap: '0.25rem' },
               }}
             />
+            {/* 모바일 닫기 버튼 */}
             <div className="mt-2 flex justify-end sm:hidden">
               <button
                 className="rounded-md border px-3 py-1 text-sm"

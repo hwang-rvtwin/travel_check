@@ -14,6 +14,22 @@ type ESIMDeal = { name: string; go: string };
 type PowerInfo = { plugTypes: string[]; voltage: string; frequency: string; source: string };
 type BaggageInfo = { guide: string; airlineLinks: { code: string; title: string; url: string }[] };
 type ChecklistItem = { id: string; label: string; checked: boolean };
+type AirlineFromCountry = { code: string; name: string; url?: string };
+type ExtraLink = { title: string; url: string };
+
+type AirlineObj = {
+  code?: string;
+  name?: string;
+  nameKo?: string;
+  nameEn?: string;
+  url?: string;
+  baggageUrl?: string;
+};
+type AirlineItem = string | AirlineObj;
+
+function isAirlineObj(a: AirlineItem): a is AirlineObj {
+  return typeof a === 'object' && a !== null;
+}
 
 type ApiResponse = {
   country: string; // ISO2
@@ -142,6 +158,72 @@ export default function Home() {
     const id = setInterval(() => setNow(new Date()), 60_000);
     return () => clearInterval(id);
   }, []);
+  
+  const [countryAirlines, setCountryAirlines] = useState<AirlineFromCountry[]>([]);
+  const [countryBaggageLinks, setCountryBaggageLinks] = useState<ExtraLink[]>([]);
+
+  useEffect(() => {
+    let abort = false;
+    (async () => {
+      try {
+        const res = await fetch(`/data/country/${country}.json`, { cache: 'force-cache' });
+        if (!res.ok) { if (!abort) { setCountryAirlines([]); setCountryBaggageLinks([]); } return; }
+
+        const j = (await res.json()) as {
+          baggage?: { links?: { code?: string; name?: string; url?: string }[] };
+          baggageLinks?: { title?: string; url?: string }[];
+          airlines?: AirlineItem[];
+          airline?: AirlineItem[];
+        };
+
+        // 1) baggage.links 우선
+        const bagLinks = Array.isArray(j?.baggage?.links) ? j.baggage!.links! : [];
+        if (bagLinks.length) {
+          const list = bagLinks
+            .map((b) => ({
+              code: String(b?.code ?? '').toUpperCase(),
+              name: String(b?.name ?? b?.code ?? '').trim(),
+              url: b?.url ? String(b.url) : undefined,
+            }))
+            .filter((x) => x.code);
+          if (!abort) { setCountryAirlines(list); setCountryBaggageLinks([]); }
+          return;
+        }
+
+        // 2) fallback: airlines/airline (문자열 or 객체)
+        const rawList: AirlineItem[] =
+          Array.isArray(j?.airlines) ? j.airlines! :
+          Array.isArray(j?.airline)  ? j.airline!  : [];
+
+        const list = rawList
+          .map<AirlineFromCountry>((a) =>
+            isAirlineObj(a)
+              ? {
+                  code: String(a.code ?? '').toUpperCase(),
+                  name: String(a.name ?? a.nameKo ?? a.nameEn ?? a.code ?? '').trim(),
+                  url: a.url ?? a.baggageUrl,
+                }
+              : { code: a.toUpperCase(), name: a.toUpperCase() }
+          )
+          .filter((x) => x.code);
+
+        // (선택) top-level baggageLinks(레거시)
+        const extra = Array.isArray(j?.baggageLinks)
+          ? j.baggageLinks
+              .filter((b): b is { title: string; url: string } => !!b?.title && !!b?.url)
+              .map((b) => ({ title: String(b.title), url: String(b.url) }))
+          : [];
+
+        if (!abort) {
+          setCountryAirlines(list);
+          setCountryBaggageLinks(extra);
+        }
+      } catch {
+        if (!abort) { setCountryAirlines([]); setCountryBaggageLinks([]); }
+      }
+    })();
+    return () => { abort = true; };
+  }, [country]);
 
   // 날짜/시간을 타임존에 맞춰 보기 좋게 포맷
   function fmtZoned(d: Date, timeZone: string) {
@@ -400,8 +482,7 @@ export default function Home() {
         >
           출국 체크허브 ✈️          
         </button>
-        <div className="text-xs opacity-70">
-          ※ 본 요약은 참고용입니다. 최종 규정은 항공사·출입국·대사관 공지를 따르며, 최신 정보는 IATA/정부 사이트에서 확인하세요.
+        <div className="flex items-center justify-between text-sm opacity-80">
         </div>
       </header>
 
@@ -417,12 +498,12 @@ export default function Home() {
               const iso2 = e.target.value;
               const c = COUNTRIES.find((x) => x.iso2 === iso2)!;
               setCountry(iso2);
-              setCountryName(c.nameEn);
+              setCountryName(c.nameKo);
               setCity(null);
             }}
           >
             {COUNTRIES.map((c) => (
-              <option key={c.iso2} value={c.iso2}>{c.nameEn}</option>
+              <option key={c.iso2} value={c.iso2}>{c.nameKo}</option>
             ))}
           </select>
         </div>
@@ -441,7 +522,7 @@ export default function Home() {
           >
             <option value="" disabled>도시/공항 선택</option>
             {(selectedCountry?.cities || []).map((ct) => (
-              <option key={ct.iata} value={ct.iata}>{ct.cityEn} ({ct.iata})</option>
+              <option key={ct.iata} value={ct.iata}>{ct.cityKo} ({ct.iata})</option>
             ))}
           </select>
         </div>
@@ -465,7 +546,7 @@ export default function Home() {
       {/* 선택 요약 */}
       <section className="mt-4 text-sm text-gray-600">
         <span className="mr-3">국가: <b>{countryName}</b> ({country})</span>
-        <span className="mr-3">도시/공항: <b>{city ? `${city.cityEn} (${city.iata})` : '-'}</b></span>
+        <span className="mr-3">도시/공항: <b>{city ? `${city.cityKo} (${city.iata})` : '-'}</b></span>
         <span className="mr-3">여권국가: <b>{passport}</b></span>
         <span className="mr-3">여행기간: <b>{from || '—'} ~ {to || '—'}</b></span>
       </section>
@@ -565,13 +646,53 @@ export default function Home() {
             <article className="rounded-2xl border p-4 shadow-sm">
               <h2 className="mb-2 text-lg font-semibold">수하물</h2>
               <p className="text-sm leading-relaxed">{data.baggage.guide}</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {data.baggage.airlineLinks?.map((a, i) => (
-                  <a key={i} className="text-sm text-blue-600 underline" href={a.url} target="_blank" rel="noreferrer">
-                    {a.title}
-                  </a>
-                ))}
-              </div>
+
+              {/* 1순위: 나라 JSON의 airlines 목록 (URL 있으면 링크, 없으면 텍스트) */}
+              {countryAirlines.length > 0 && (
+                <>
+                  <div className="mt-3 text-sm font-medium">해당 노선 취항 항공사</div>
+                  <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+                    {countryAirlines.map((a) =>
+                      a.url ? (
+                        <a
+                          key={a.code}
+                          href={a.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-600 underline"
+                          title={`${a.name} 수하물 규정`}
+                        >
+                          {a.name} ({a.code})
+                        </a>
+                      ) : (
+                        <span key={a.code}>{a.name} ({a.code})</span>
+                      )
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* 2순위: 나라 JSON의 추가 수하물 링크 */}
+              {countryBaggageLinks.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {countryBaggageLinks.map((l, i) => (
+                    <a key={i} className="text-sm text-blue-600 underline" href={l.url} target="_blank" rel="noreferrer">
+                      {l.title}
+                    </a>
+                  ))}
+                </div>
+              )}
+
+              {/* 백업: API가 내려준 링크(예: route.ts가 airlines에서 URL을 추출해 준 경우) */}
+              {!countryAirlines.length && !countryBaggageLinks.length && data.baggage.airlineLinks?.length ? (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {data.baggage.airlineLinks.map((a, i) => (
+                    <a key={i} className="text-sm text-blue-600 underline" href={a.url} target="_blank" rel="noreferrer">
+                      {a.title}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
             </article>
 
             {/* 시차 */}

@@ -40,8 +40,6 @@ export async function GET(req: NextRequest) {
   const inUrl = new URL(req.url);
   const sub = buildSubId(inUrl);
 
-  const market = (inUrl.searchParams.get('market') || 'kr').toLowerCase();
-
   const urlParam = inUrl.searchParams.get('url');     // 직접 전달된 파트너 링크
   const slug = inUrl.searchParams.get('slug');        // 사전에 저장한 키(예: plug-adapter)
   let target = urlParam || (slug ? COUPANG_SLUGS[slug] : '');

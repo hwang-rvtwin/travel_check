@@ -2,36 +2,33 @@
   "iso2": "BN",
   "nameKo": "브루나이",
   "nameEn": "Brunei",
+  "nameCn": "文莱",
+  "nameJp": "ブルネイ",
   "power": {
     "plug": [
       "G"
     ],
     "voltage": "240V",
-    "frequency": "50Hz",
-    "source": "WorldStandards (recheck required)"
+    "frequency": "50Hz"
   },
-  "visa": {
-    "summary": "입국·비자 최신 규정은 IATA Travel Centre 및 해당국 정부/대사관 공지를 확인하세요.",
-    "sources": [
-      {
-        "title": "IATA Travel Centre",
-        "url": "https://www.iata.org/en/services/compliance/timatic/travel-documentation/"
-      }
-    ]
-  },
+  "airline": [
+    "BI",
+    "SQ"
+  ],
   "baggage": {
     "links": [
       {
-        "code": "KE",
-        "title": "대한항공 수하물",
-        "url": "https://www.koreanair.com/contents/plan-your-travel/baggage"
+        "code": "BI",
+        "name": "Royal Brunei",
+        "url": "https://www.flyroyalbrunei.com/global/en/information/baggage/"
       },
       {
-        "code": "OZ",
-        "title": "아시아나항공 수하물",
-        "url": "https://flyasiana.com/C/KR/KO/contents/user-guide"
+        "code": "SQ",
+        "name": "Singapore Airlines",
+        "url": "https://www.singaporeair.com/en_UK/kr/travel-info/baggage/"
       }
     ]
   },
-  "updatedAt": "2025-08-19T15:49:15.074+09:00"
+  "updatedAt": "2025-08-21T15:14:58.598+09:00",
+  "_note": "항공사/수하물 링크는 수시 변경 가능 — 운영 중 확인/보정 필요"
 }

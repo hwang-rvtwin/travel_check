@@ -1,0 +1,22 @@
+{
+  "results": [
+    {
+      "id": 1645528,
+      "name": "Denpasar",
+      "latitude": -8.65,
+      "longitude": 115.21667,
+      "elevation": 33,
+      "feature_code": "PPLA",
+      "country_code": "ID",
+      "admin1_id": 1650535,
+      "admin2_id": 1645527,
+      "timezone": "Asia/Makassar",
+      "population": 725314,
+      "country_id": 1643084,
+      "country": "Indonesia",
+      "admin1": "Bali",
+      "admin2": "Kota Denpasar"
+    }
+  ],
+  "generationtime_ms": 0.4361868
+}

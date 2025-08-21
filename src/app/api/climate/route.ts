@@ -3,8 +3,6 @@ export const runtime = 'nodejs';
 
 import type { NextRequest } from 'next/server';
 
-function startOfDay(d: Date) { d.setHours(0,0,0,0); return d; }
-function toISODate(d: Date) { return d.toISOString().slice(0, 10); }
 function round(n: number, precision = 2) {
   const p = Math.pow(10, precision);
   return Math.round(n * p) / p;

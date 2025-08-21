@@ -1,0 +1,42 @@
+{
+  "results": [
+    {
+      "id": 1673820,
+      "name": "Kaohsiung",
+      "latitude": 22.61626,
+      "longitude": 120.31333,
+      "elevation": 9,
+      "feature_code": "PPLA",
+      "country_code": "TW",
+      "admin1_id": 7280289,
+      "admin2_id": 9613373,
+      "timezone": "Asia/Taipei",
+      "population": 1519711,
+      "country_id": 1668284,
+      "country": "Taiwan",
+      "admin1": "Takao",
+      "admin2": "Kaohsiung"
+    },
+    {
+      "id": 6301820,
+      "name": "Kao-hsiung International Airport",
+      "latitude": 22.57709,
+      "longitude": 120.35001,
+      "elevation": 9,
+      "feature_code": "AIRP",
+      "country_code": "TW",
+      "admin1_id": 7280289,
+      "admin2_id": 9613373,
+      "admin3_id": 1675626,
+      "admin4_id": 11701736,
+      "timezone": "Asia/Taipei",
+      "country_id": 1668284,
+      "country": "Taiwan",
+      "admin1": "Takao",
+      "admin2": "Kaohsiung",
+      "admin3": "Xiaogang",
+      "admin4": "Guilin"
+    }
+  ],
+  "generationtime_ms": 0.2655983
+}

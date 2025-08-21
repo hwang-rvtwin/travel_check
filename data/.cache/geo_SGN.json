@@ -1,0 +1,20 @@
+{
+  "results": [
+    {
+      "id": 1566083,
+      "name": "Ho Chi Minh City",
+      "latitude": 10.82302,
+      "longitude": 106.62965,
+      "elevation": 7,
+      "feature_code": "PPLA",
+      "country_code": "VN",
+      "admin1_id": 1580578,
+      "timezone": "Asia/Ho_Chi_Minh",
+      "population": 8993082,
+      "country_id": 1562822,
+      "country": "Vietnam",
+      "admin1": "Ho Chi Minh"
+    }
+  ],
+  "generationtime_ms": 0.36096573
+}

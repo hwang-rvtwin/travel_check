@@ -2,37 +2,40 @@
   "iso2": "MP",
   "nameKo": "사이판(미국령)",
   "nameEn": "Northern Mariana Islands",
+  "nameCn": "北马里亚纳群岛",
+  "nameJp": "北マリアナ諸島",
   "power": {
     "plug": [
       "A",
       "B"
     ],
     "voltage": "110V",
-    "frequency": "60Hz",
-    "source": "WorldStandards (recheck required)"
+    "frequency": "60Hz"
   },
-  "visa": {
-    "summary": "입국·비자 최신 규정은 IATA Travel Centre 및 해당국 정부/대사관 공지를 확인하세요.",
-    "sources": [
-      {
-        "title": "IATA Travel Centre",
-        "url": "https://www.iata.org/en/services/compliance/timatic/travel-documentation/"
-      }
-    ]
-  },
+  "airline": [
+    "KE",
+    "7C",
+    "TW"
+  ],
   "baggage": {
     "links": [
       {
         "code": "KE",
-        "title": "대한항공 수하물",
-        "url": "https://www.koreanair.com/contents/plan-your-travel/baggage"
+        "name": "Korean Air",
+        "url": "https://www.koreanair.com/kr/ko/airport/baggage"
       },
       {
-        "code": "OZ",
-        "title": "아시아나항공 수하물",
-        "url": "https://flyasiana.com/C/KR/KO/contents/user-guide"
+        "code": "7C",
+        "name": "Jeju Air",
+        "url": "https://www.jejuair.net/ko/additionalService/service/preorderedBaggage.do"
+      },
+      {
+        "code": "TW",
+        "name": "T'way Air",
+        "url": "https://www.twayair.com/app/serviceInfo/contents/1148"
       }
     ]
   },
-  "updatedAt": "2025-08-19T15:49:15.074+09:00"
+  "updatedAt": "2025-08-21T15:47:19.135+09:00",
+  "_note": "항공사/수하물 링크는 수시 변경 가능 — 운영 중 확인/보정 필요"
 }

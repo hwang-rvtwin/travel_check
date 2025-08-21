@@ -1,0 +1,70 @@
+{
+  "results": [
+    {
+      "id": 1735161,
+      "name": "Kuala Lumpur",
+      "latitude": 3.1412,
+      "longitude": 101.68653,
+      "elevation": 56,
+      "feature_code": "PPLC",
+      "country_code": "MY",
+      "admin1_id": 1733046,
+      "admin2_id": 12231269,
+      "timezone": "Asia/Kuala_Lumpur",
+      "population": 1453975,
+      "country_id": 1733045,
+      "country": "Malaysia",
+      "admin1": "Kuala Lumpur",
+      "admin2": "WP. Kuala Lumpur"
+    },
+    {
+      "id": 10177074,
+      "name": "Kuala Lumpur Village",
+      "latitude": 3.15427,
+      "longitude": 101.68486,
+      "elevation": 71,
+      "feature_code": "PPLX",
+      "country_code": "MY",
+      "admin1_id": 1733046,
+      "admin2_id": 12231269,
+      "timezone": "Asia/Kuala_Lumpur",
+      "country_id": 1733045,
+      "country": "Malaysia",
+      "admin1": "Kuala Lumpur",
+      "admin2": "WP. Kuala Lumpur"
+    },
+    {
+      "id": 6941953,
+      "name": "Kuala Lumpur Bird Park",
+      "latitude": 3.1419,
+      "longitude": 101.689,
+      "elevation": 50,
+      "feature_code": "PRK",
+      "country_code": "MY",
+      "admin1_id": 1733046,
+      "admin2_id": 12231269,
+      "timezone": "Asia/Kuala_Lumpur",
+      "country_id": 1733045,
+      "country": "Malaysia",
+      "admin1": "Kuala Lumpur",
+      "admin2": "WP. Kuala Lumpur"
+    },
+    {
+      "id": 6301255,
+      "name": "Kuala Lumpur International Airport",
+      "latitude": 2.74558,
+      "longitude": 101.70992,
+      "elevation": 21,
+      "feature_code": "AIRP",
+      "country_code": "MY",
+      "admin1_id": 1733037,
+      "admin2_id": 1734789,
+      "timezone": "Asia/Kuala_Lumpur",
+      "country_id": 1733045,
+      "country": "Malaysia",
+      "admin1": "Selangor",
+      "admin2": "Sepang"
+    }
+  ],
+  "generationtime_ms": 0.9891987
+}
