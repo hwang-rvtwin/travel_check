@@ -1,127 +1,110 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
+import {format} from 'date-fns';
+import {DayPicker} from 'react-day-picker';
+import 'react-day-picker/style.css';
 
 type Props = {
   label: string;
   value: string | null;           // 'YYYY-MM-DD' or null
   onChange: (v: string) => void;
-  min?: string;
-  max?: string;
+  min?: string;                   // 'YYYY-MM-DD'
+  max?: string;                   // 'YYYY-MM-DD'
   className?: string;
 };
 
-function parse(value: string | null) {
-  if (!value) return { y: '', m: '', d: '' };
-  const [yy, mm, dd] = value.split('-');
-  return { y: yy || '', m: mm || '', d: dd || '' };
+// 'YYYY-MM-DD' -> Date
+function parseISODate(v?: string | null): Date | undefined {
+  if (!v) return undefined;
+  const [y, m, d] = v.split('-').map(Number);
+  if (!y || !m || !d) return undefined;
+  return new Date(y, m - 1, d);
+}
+// Date -> 'YYYY-MM-DD'
+function toISODate(d: Date) {
+  return format(d, 'yyyy-MM-dd');
 }
 
-function daysInMonth(y: number, m: number) {
-  return new Date(y, m, 0).getDate();
-}
-const pad2 = (n: number) => String(n).padStart(2, '0');
+export default function DateField({label, value, onChange, min, max, className = ''}: Props) {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-export default function DateField({
-  label,
-  value,
-  onChange,
-  min,
-  max,
-  className = '',
-}: Props) {
-  const [isIOS, setIsIOS] = useState(false);
+  const selected = useMemo(() => parseISODate(value), [value]);
+  const fromDate = useMemo(() => parseISODate(min), [min]);
+  const toDate   = useMemo(() => parseISODate(max), [max]);
+
+  // 바깥 클릭 시 닫기
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.navigator) {
-      const { userAgent, platform, maxTouchPoints } = window.navigator;
-      const isiOSUA = /iPhone|iPad|iPod/i.test(userAgent);
-      const isiPadOS = platform === 'MacIntel' && (maxTouchPoints ?? 0) > 1;
-      setIsIOS(isiOSUA || isiPadOS);
-    }
-  }, []);
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      if (!wrapperRef.current) return;
+      if (!wrapperRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    window.addEventListener('mousedown', onClick);
+    return () => window.removeEventListener('mousedown', onClick);
+  }, [open]);
 
-  // 항상 호출되는 훅
-  const now = useMemo(() => new Date(), []);
-  const curY = now.getFullYear();
-  const range = 4;
-
-  const years = useMemo(
-    () => Array.from({ length: range * 2 + 1 }, (_, i) => String(curY - range + i)),
-    [curY]
-  );
-  const months = useMemo(() => Array.from({ length: 12 }, (_, i) => pad2(i + 1)), []);
-  const parts = useMemo(() => parse(value), [value]);
-
-  const dim = useMemo(() => {
-    const y = parseInt(parts.y || String(curY), 10);
-    const m = parseInt(parts.m || '1', 10);
-    return daysInMonth(y, m);
-  }, [parts.y, parts.m, curY]);
-
-  const days = useMemo(() => Array.from({ length: dim }, (_, i) => pad2(i + 1)), [dim]);
-
-  const commit = (ny?: string, nm?: string, nd?: string) => {
-    const y = ny ?? parts.y;
-    const m = nm ?? parts.m;
-    const d = nd ?? parts.d;
-    if (y && m && d) onChange(`${y}-${m}-${d}`);
-    else onChange('');
+  const handlePick = (d?: Date) => {
+    if (!d) return;
+    onChange(toISODate(d));
+    setOpen(false);
   };
 
-  // 비 iOS: 네이티브 date 인풋 (데스크탑/안드)
-  if (!isIOS) {
-    return (
-      <div className={`min-w-0 ${className}`}>
-        <label className="mb-1 block text-sm opacity-80">{label}</label>
-        <input
-          type="date"
-          value={value || ''}
-          onChange={(e) => onChange(e.target.value)}
-          min={min}
-          max={max}
-          className="date-native h-10 w-full max-w-full min-w-0 md:min-w-[160px]
-                     rounded-md border px-3 bg-white dark:bg-zinc-900"
-        />
-      </div>
-    );
-  }
-
-  // iOS: 3분할 셀렉트 (넘침 방지)
   return (
-    <div className={`min-w-0 ${className}`}>
+    <div className={`min-w-0 ${className}`} ref={wrapperRef}>
       <label className="mb-1 block text-sm opacity-80">{label}</label>
-      <div className="grid grid-cols-3 gap-2">
-        <select
-          className="h-10 w-full md:min-w-[90px] rounded-md border px-2 bg-white dark:bg-zinc-900"
-          value={parts.y}
-          onChange={(e) => commit(e.target.value, parts.m, parts.d)}
-        >
-          <option value="">연</option>
-          {years.map((y) => (
-            <option key={y} value={y}>{y}</option>
-          ))}
-        </select>
-        <select
-          className="h-10 w-full md:min-w-[90px] rounded-md border px-2 bg-white dark:bg-zinc-900"
-          value={parts.m}
-          onChange={(e) => commit(parts.y, e.target.value, parts.d)}
-        >
-          <option value="">월</option>
-          {months.map((m) => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
-        <select
-          className="h-10 w-full md:min-w-[90px] rounded-md border px-2 bg-white dark:bg-zinc-900"
-          value={parts.d}
-          onChange={(e) => commit(parts.y, parts.m, e.target.value)}
-        >
-          <option value="">일</option>
-          {days.map((d) => (
-            <option key={d} value={d}>{d}</option>
-          ))}
-        </select>
-      </div>
+
+      {/* 트리거 인풋 (readOnly, 줌 방지 16px) */}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="h-10 w-full rounded-md border bg-white px-3 text-left text-[16px]
+                   dark:bg-zinc-900"
+        aria-haspopup="dialog"
+        aria-expanded={open}
+      >
+        {selected ? toISODate(selected) : <span className="opacity-60">연-월-일</span>}
+      </button>
+
+      {/* 팝업 캘린더 (모바일: 풀스크린 모달, 데스크탑: 드롭다운) */}
+      {open && (
+        <>
+          {/* 모바일 백드롭 */}
+          <div className="fixed inset-0 z-40 block bg-black/30 sm:hidden" onClick={() => setOpen(false)} />
+
+          <div
+            className="
+              z-50 mt-2 rounded-md border bg-white p-2 shadow-lg dark:bg-zinc-900
+              sm:absolute sm:w-[22rem]
+              sm:block
+              fixed left-1/2 top-1/2 w-[min(92vw,24rem)] -translate-x-1/2 -translate-y-1/2 sm:static sm:translate-x-0 sm:translate-y-0
+            "
+          >
+            <DayPicker
+              mode="single"
+              selected={selected}
+              onSelect={handlePick}
+              weekStartsOn={1}
+              fromDate={fromDate}
+              toDate={toDate}
+              captionLayout="dropdown"
+              styles={{
+                caption: {padding: '0.25rem 0.25rem 0'},
+                caption_dropdowns: {gap: '0.25rem'},
+              }}
+            />
+            <div className="mt-2 flex justify-end sm:hidden">
+              <button
+                className="rounded-md border px-3 py-1 text-sm"
+                onClick={() => setOpen(false)}
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
