@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
 import Script from 'next/script';
 import './globals.css';
+import HeaderNav from '@/components/HeaderNav';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
@@ -54,12 +55,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
 
         <div className="min-h-dvh flex flex-col">          
+          <HeaderNav />
+
           <main className="flex-1">{children}</main>
 
           <footer className="border-t bg-white/70">
             <div className="mx-auto max-w-5xl px-4 py-6 text-center text-sm text-gray-600">
               <nav className="mb-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
                 <Link href="/" className="hover:underline">홈</Link>
+                {/*<Link href="/destinations" className="hover:underline">국가 인덱스</Link>*/}
                 <Link href="/about" className="hover:underline">소개</Link>
                 <Link href="/contact" className="hover:underline">문의</Link>
                 <Link href="/legal/privacy" className="hover:underline">개인정보처리방침</Link>

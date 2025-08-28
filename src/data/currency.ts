@@ -38,7 +38,7 @@ export const CURRENCY_BY_ISO2: Record<string, Currency> = {
 
   AE: { code: 'AED', symbol: 'د.إ', nameEn: 'UAE Dirham',          nameKr: '아랍에미리트 디르함',  decimals: 2 },
   QA: { code: 'QAR', symbol: 'ر.ق', nameEn: 'Qatari Riyal',        nameKr: '카타르 리얄',          decimals: 2 },
-  TR: { code: 'TRY', symbol: '₺',  nameEn: 'Turkish Lira',         nameKr: '터키 리라',            decimals: 2 },
+  TR: { code: 'TRY', symbol: '₺',  nameEn: 'Turkish Lira',         nameKr: '튀르키예 리라',            decimals: 2 },
   SA: { code: 'SAR', symbol: 'ر.س', nameEn: 'Saudi Riyal',         nameKr: '사우디 리얄',          decimals: 2 },
   IL: { code: 'ILS', symbol: '₪',  nameEn: 'Israeli New Shekel',   nameKr: '이스라엘 신 셰켈',     decimals: 2 },
   JO: { code: 'JOD', symbol: 'JD', nameEn: 'Jordanian Dinar',      nameKr: '요르단 디나르',        decimals: 3 },

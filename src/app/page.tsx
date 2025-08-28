@@ -472,8 +472,8 @@ export default function Home() {
   const tripMonths = monthsSpan(from, to); // 평년 카드에서 강조할 월
 
   return (
-    <main className="mx-auto max-w-4xl p-4">
-      {/* 헤더 */}
+    <main className="mx-auto max-w-4xl p-4">      
+    {/* { 헤더 }
       <header className="flex flex-col gap-2 py-2 sm:flex-row sm:items-center sm:justify-between">
         <button
           onClick={resetAll}
@@ -485,7 +485,8 @@ export default function Home() {
         <div className="flex items-center justify-between text-sm opacity-80">
         </div>
       </header>
-
+      */}
+      
       {/* 입력 영역 */}
       <section className="mt-4 grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-6">
         {/* 나라 선택 */}
