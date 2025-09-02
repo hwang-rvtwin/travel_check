@@ -7,6 +7,7 @@ import PlugPhotos from '@/components/PlugPhotos';
 import { CURRENCY_BY_ISO2 } from '@/data/currency';
 import Image from 'next/image';
 import DateField from '@/components/DateField';
+import { sortKo } from "@/lib/sort";
 
 /* ---------- 타입 ---------- */
 type VisaInfo = { summary: string; sources?: { title: string; url: string }[]; updatedAt?: string | null };
@@ -142,6 +143,23 @@ export default function Home() {
   const selectedCountry: Country | undefined = useMemo(
     () => COUNTRIES.find((c) => c.iso2 === country),
     [country]
+  );
+
+  // 나라 목록: 한국어 이름 기준 가나다
+  const countryOptions = useMemo(
+    () => COUNTRIES.slice().sort(sortKo((c) => c.nameKo ?? c.nameEn ?? c.iso2)),
+    []
+  );
+  
+  // 선택 국가의 공항 목록: 도시 한글명 → 영문명 → IATA 순으로 정렬
+  const cityOptions = useMemo(
+    () =>
+      (selectedCountry?.cities ?? [])
+        .slice()
+        .sort(
+          sortKo((ct) => ct.cityKo ?? ct.cityEn ?? ct.cityJp ?? ct.cityCn ?? ct.iata)
+        ),
+    [selectedCountry]
   );
 
   // 체크리스트 저장 키
@@ -503,7 +521,7 @@ export default function Home() {
               setCity(null);
             }}
           >
-            {COUNTRIES.map((c) => (
+            {countryOptions.map((c) => (
               <option key={c.iso2} value={c.iso2}>{c.nameKo}</option>
             ))}
           </select>
@@ -522,7 +540,7 @@ export default function Home() {
             }}
           >
             <option value="" disabled>도시/공항 선택</option>
-            {(selectedCountry?.cities || []).map((ct) => (
+            {cityOptions.map((ct) => (
               <option key={ct.iata} value={ct.iata}>{ct.cityKo} ({ct.iata})</option>
             ))}
           </select>
@@ -744,20 +762,39 @@ export default function Home() {
 
                 // 샘플: 100,000 KRW → 현지통화 / 100 현지통화 → KRW
                 const sampleKrw = 100_000;
-                const toLocal = sampleKrw * fx.rate;
                 const sampleLocal = 100;
-                const toKrw = sampleLocal * fx.inverse;
+
+                // ✅ 숫자 보정 + inverse 폴백 계산
+                const rate = Number(fx.rate); // 1 KRW → local 통화
+                const inverse = Number.isFinite(Number(fx.inverse))
+                  ? Number(fx.inverse)              // API가 넘겨주면 사용
+                  : (rate > 0 ? 1 / rate : NaN);    // 없으면 1/rate 로 계산
+                
+                const toLocal = Number.isFinite(rate) ? sampleKrw * rate : NaN;       // 100,000 KRW → local
+                const toKrw   = Number.isFinite(inverse) ? sampleLocal * inverse : NaN; // 100 local → KRW
 
                 return (
                   <div className="text-sm space-y-1">
                     <div>
                       기준 통화: <b>KRW</b> → 현지 통화: <b>{cur.code} ({cur.nameKr})</b>
                     </div>
-                    <div>환율: <b>1 KRW ≈ {toLocal / sampleKrw < 0.01 ? (fx.rate).toFixed(6) : (fx.rate).toFixed(4)} {cur.code}</b></div>
-                    <div className="flex flex-wrap gap-4">
-                      <span>예시: <b>{fmtMoney(sampleKrw, 'KRW')}</b> ≈ <b>{fmtMoney(toLocal, cur.code)}</b></span>
-                      <span>예시: <b>{fmtMoney(sampleLocal, cur.code)}</b> ≈ <b>{fmtMoney(toKrw, 'KRW')}</b></span>
+
+                    {/* 소수 자리수 결정도 rate 변수로 판단 */}
+                    <div>
+                      환율: <b>1 KRW ≈ {rate < 0.01 ? rate.toFixed(6) : rate.toFixed(4)} {cur.code}</b>
                     </div>
+
+                    <div className="flex flex-wrap gap-4">
+                      <span>
+                        예시: <b>{fmtMoney(sampleKrw, 'KRW')}</b> ≈{" "}
+                        <b>{Number.isFinite(toLocal) ? fmtMoney(toLocal, cur.code) : "—"}</b>
+                      </span>
+                      <span>
+                        예시: <b>{fmtMoney(sampleLocal, cur.code)}</b> ≈{" "}
+                        <b>{Number.isFinite(toKrw) ? fmtMoney(toKrw, 'KRW') : "—"}</b>
+                      </span>
+                    </div>
+
                     <div className="text-xs opacity-70">
                       업데이트: {fx.updated} · 출처: {fx.source}
                     </div>

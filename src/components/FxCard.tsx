@@ -1,3 +1,4 @@
+// src/components/FxCard.tsx  (전체 교체본)
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -28,7 +29,7 @@ function extractRate(j: unknown, quote: string): number | null {
   if (isNum(o.price)) return o.price;
   if (isNum(o.amount)) return o.amount;
 
-  // 2) { data: { rate: number } } 패턴 (any 사용 X)
+  // 2) { data: { rate: number } }
   if (o.data && typeof o.data === 'object') {
     const dataObj = o.data as Record<string, unknown>;
     const dataRate = dataObj['rate'];
@@ -48,7 +49,7 @@ function extractRate(j: unknown, quote: string): number | null {
     if (isNum(r)) return r;
   }
 
-  // 5) 한 단계 더 중첩된 케이스들
+  // 5) 한 단계 더 중첩
   for (const v of Object.values(o)) {
     if (v && typeof v === 'object') {
       const nested = extractRate(v, quote);
@@ -56,6 +57,34 @@ function extractRate(j: unknown, quote: string): number | null {
     }
   }
   return null;
+}
+
+// 업데이트 날짜 후보를 최대한 뽑아내기
+function extractUpdatedAt(j: unknown): string | null {
+  if (!j || typeof j !== 'object') return null;
+  const o = j as Record<string, unknown>;
+
+  const direct = o['updatedAt'] ?? o['date'] ?? o['last_update'] ?? o['last_updated'];
+  if (typeof direct === 'string' && direct.length >= 8) return direct;
+
+  // open.er-api: time_last_update_utc
+  const tlu = o['time_last_update_utc'];
+  if (typeof tlu === 'string' && tlu.length >= 8) return tlu;
+
+  // { data: { date: "..." } }
+  if (o.data && typeof o.data === 'object') {
+    const d = (o.data as Record<string, unknown>)['date'];
+    if (typeof d === 'string' && d.length >= 8) return d;
+  }
+  return null;
+}
+
+// 소스 도메인/라벨 추출
+function labelFromUrl(url: string): string {
+  if (url.startsWith('http')) {
+    try { return new URL(url).hostname; } catch { /* noop */ }
+  }
+  return url.replace(/^https?:\/\//, '');
 }
 
 async function getJSON(url: string): Promise<unknown | null> {
@@ -66,9 +95,18 @@ async function getJSON(url: string): Promise<unknown | null> {
   } catch { return null; }
 }
 
+function pickString(o: unknown, key: string): string | null {
+  if (o && typeof o === 'object') {
+    const v = (o as Record<string, unknown>)[key];
+    return typeof v === 'string' ? v : null;
+  }
+  return null;
+}
+
 export default function FxCard({ base, quote = 'KRW' }: { base: string; quote?: string }) {
   const [state, setState] = useState<FxState>('idle');
   const [rate, setRate] = useState<number | null>(null);
+  const [meta, setMeta] = useState<{ source: string; asOf: string } | null>(null);
 
   // 현재 오리진(절대경로) + 상대경로 모두 시도
   const apiFxCandidates = useMemo(() => {
@@ -89,6 +127,11 @@ export default function FxCard({ base, quote = 'KRW' }: { base: string; quote?: 
       if (isNum(v)) {
         setRate(v);
         setState('ok');
+
+        // 로컬 API가 source/updatedAt을 내려주면 사용, 아니면 라벨/오늘 날짜로 폴백
+        const asOf = (extractUpdatedAt(j) ?? new Date().toISOString()).slice(0, 10);
+        const src = pickString(j, 'source') ?? labelFromUrl(p);
+        setMeta({ source: src, asOf });
         return;
       }
     }
@@ -105,6 +148,10 @@ export default function FxCard({ base, quote = 'KRW' }: { base: string; quote?: 
       if (isNum(v)) {
         setRate(v);
         setState('ok');
+
+        const asOf = (extractUpdatedAt(j) ?? new Date().toISOString()).slice(0, 10);
+        const src = labelFromUrl(u);
+        setMeta({ source: src, asOf });
         return;
       }
     }
@@ -118,7 +165,16 @@ export default function FxCard({ base, quote = 'KRW' }: { base: string; quote?: 
   return (
     <div className="text-sm">
       {state === 'loading' && <span className="text-gray-500">환율 불러오는 중…</span>}
-      {state === 'ok' && rate !== null && <b>{fmtKRW(base, rate)}</b>}
+      {state === 'ok' && rate !== null && (
+        <>
+          <b>{fmtKRW(base, rate)}</b>
+          {meta && (
+            <p className="mt-1 text-[12px] text-gray-500">
+              {meta.source} · {meta.asOf}
+            </p>
+          )}
+        </>
+      )}
       {state === 'error' && (
         <div className="flex items-center gap-2">
           <span>환율을 불러오지 못했습니다.</span>

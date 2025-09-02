@@ -2,15 +2,17 @@
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 import { getAllCountries, getCountryBySlug } from '@/lib/geo';
 import { TZ_BY_ISO2, CCY_BY_ISO2 } from '@/lib/geo-extra';
 import AffiliateKit from '@/components/AffiliateKit';
 import LocalTime from '@/components/LocalTime';
 import PlugPhotos from '@/components/PlugPhotos';
 import FxCard from '@/components/FxCard';
+import PackingQuickLinks from "./_PackingQuickLinks";
 
 type CountryParams = { country: string };
-type PageProps = { params: Promise<CountryParams> };
+
 type CorePart = 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second';
 
 export const dynamicParams = false;
@@ -38,8 +40,7 @@ function offsetMinutes(tz: string, now = new Date()): number {
     second: '2-digit',
   });
 
-  const parts = dtf.formatToParts(now); // Intl.DateTimeFormatPart[]
-
+  const parts = dtf.formatToParts(now);
   const get = (k: CorePart): number => {
     const v = parts.find((p) => p.type === k)?.value;
     return v ? parseInt(v, 10) : 0;
@@ -57,7 +58,6 @@ function offsetMinutes(tz: string, now = new Date()): number {
 }
 
 function hoursDiffFromSeoul(tz: string): number {
-  // 서울 대비 시차(시간 단위, 반올림)
   return Math.round((offsetMinutes(tz) - offsetMinutes('Asia/Seoul')) / 60);
 }
 
@@ -70,12 +70,12 @@ interface CountryExtra {
   tipping: Tipping;
   payment: Payment;
   emergency: { general: string; police?: string; ambulance?: string; fire?: string };
-  transport: string;               // 대중교통/패스 팁
-  budget10d?: BudgetRangeKRW;      // 항공 제외, 10일 총액(원화)
-  topPlaces?: string[];            // 추천 관광지
-  foods?: string[];                // 추천 음식
-  apps?: string[];                 // 유용한 앱
-  souvenirs?: string[];            // 기념품
+  transport: string;
+  budget10d?: BudgetRangeKRW;
+  topPlaces?: string[];
+  foods?: string[];
+  apps?: string[];
+  souvenirs?: string[];
 }
 
 function tipText(t: Tipping): string {
@@ -283,30 +283,10 @@ const EXTRAS: Record<string, CountryExtra> = {
     apps:['BiTaksi', 'Google Maps', 'Moovit', 'GetYourGuide'],
     souvenirs:['로쿰(터키시 딜라이트)', '사프란/향신료', '차이세트', '세라믹/도자기'],
   },
-  /*
-  // 북미/유럽 추가 3개
-  GB: undefined as never, // 위에 이미 정의되어 있어 중복 방지용(편집 경고 방지)
-  FR: undefined as never,
-  DE: undefined as never,
-  IT: undefined as never,
-  ES: undefined as never,
-  AU: undefined as never,
-  NZ: undefined as never,
-  SG: undefined as never,
-  MY: undefined as never,
-  VN: undefined as never,
-  ID: undefined as never,
-  TW: undefined as never,
-  HK: undefined as never,
-  CN: undefined as never,
-  US: undefined as never,
-  CA: undefined as never,
-  AE: undefined as never,
-  */
 };
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { country } = await params;
+export async function generateMetadata( props: { params: Promise<CountryParams> }): Promise<Metadata> {
+  const { country } = await props.params;
   const c = getCountryBySlug(country);
   if (!c) return {};
   const title = `${c.nameKo} 출국 체크: 비자·eSIM·플러그·수하물 | Travel Check Hub`;
@@ -321,30 +301,29 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function CountryPage({ params }: PageProps) {
-    const { country } = await params;
-    const c = getCountryBySlug(country);
-    if (!c) return notFound();
+export default async function CountryPage({ params }: { params: Promise<CountryParams> }) {
+  const { country } = await params;
+  const c = getCountryBySlug(country);
+  if (!c) notFound();
 
-    const tz = TZ_BY_ISO2[c.iso2] ?? 'UTC';
-    const ccy = CCY_BY_ISO2[c.iso2] ?? '';    
+  const tz = TZ_BY_ISO2[c.iso2] ?? 'UTC';
+  const ccy = CCY_BY_ISO2[c.iso2] ?? '';
 
-    const ex = EXTRAS[c.iso2];
-    const diffH = hoursDiffFromSeoul(tz);
-    const diffTxt = diffH === 0 ? '시차 없음(동일)' : (diffH > 0 ? `한국보다 +${diffH}시간` : `한국보다 ${diffH}시간`);
+  const ex = EXTRAS[c.iso2];
+  const diffH = hoursDiffFromSeoul(tz);
+  const diffTxt = diffH === 0 ? '시차 없음(동일)' : (diffH > 0 ? `한국보다 +${diffH}시간` : `한국보다 ${diffH}시간`);
 
-
-    const faqs = [
-        { q: '팁 문화는?', a: ex ? tipText(ex.tipping) : '업장/지역에 따라 상이.' },
-        { q: '결제는 카드 vs 현금?', a: ex ? payText(ex.payment) : '도시권은 카드 보편, 소규모 상점은 현금 요구 가능.' },
-        { q: '응급전화 번호?', a: ex?.emergency?.general ? `긴급번호 ${ex.emergency.general} (지역별 세부 번호 상이 가능).` : '현지 안내문 확인.' },
-        { q: '대중교통 팁', a: ex?.transport ?? '대도시 대부분 교통카드/앱 사용 가능. 공항에서 구입/충전.' },
-        { q: '통상 경비(10일, 항공 제외)', a: ex?.budget10d ? `${formatBudget(ex.budget10d)} (시즌/도시/취향에 따라 ±30%)` : '여행 스타일에 따라 편차가 큼.' },
-        { q: '추천 관광지', a: ex?.topPlaces?.length ? ex.topPlaces.join(' · ') : '대표 관광지를 위주로 동선을 잡아보세요.' },
-        { q: '추천 음식', a: ex?.foods?.length ? ex.foods.join(' · ') : '로컬 인기 메뉴를 시도해 보세요.' },
-        { q: '유용한 앱', a: ex?.apps?.length ? ex.apps.join(' · ') : '현지 교통/배달/지도 앱을 준비하세요.' },
-        { q: '기념품 추천', a: ex?.souvenirs?.length ? ex.souvenirs.join(' · ') : '로컬 간식/차/공예품이 무난합니다.' },
-    ];
+  const faqs = [
+    { q: '팁 문화는?', a: ex ? tipText(ex.tipping) : '업장/지역에 따라 상이.' },
+    { q: '결제는 카드 vs 현금?', a: ex ? payText(ex.payment) : '도시권은 카드 보편, 소규모 상점은 현금 요구 가능.' },
+    { q: '응급전화 번호?', a: ex?.emergency?.general ? `긴급번호 ${ex.emergency.general} (지역별 세부 번호 상이 가능).` : '현지 안내문 확인.' },
+    { q: '대중교통 팁', a: ex?.transport ?? '대도시 대부분 교통카드/앱 사용 가능. 공항에서 구입/충전.' },
+    { q: '통상 경비(10일, 항공 제외)', a: ex?.budget10d ? `${formatBudget(ex.budget10d)} (시즌/도시/취향에 따라 ±30%)` : '여행 스타일에 따라 편차가 큼.' },
+    { q: '추천 관광지', a: ex?.topPlaces?.length ? ex.topPlaces.join(' · ') : '대표 관광지를 위주로 동선을 잡아보세요.' },
+    { q: '추천 음식', a: ex?.foods?.length ? ex.foods.join(' · ') : '로컬 인기 메뉴를 시도해 보세요.' },
+    { q: '유용한 앱', a: ex?.apps?.length ? ex.apps.join(' · ') : '현지 교통/배달/지도 앱을 준비하세요.' },
+    { q: '기념품 추천', a: ex?.souvenirs?.length ? ex.souvenirs.join(' · ') : '로컬 간식/차/공예품이 무난합니다.' },
+  ];
 
   const faqJsonLd = {
     '@context': 'https://schema.org',
@@ -372,20 +351,22 @@ export default async function CountryPage({ params }: PageProps) {
       <section className="mt-6 grid gap-4 sm:grid-cols-2">
         <InfoCard label="비자 요약" value={c.visaNoteKo} />
         <InfoCard
-            label="전압·플러그"
-            value={`${c.voltage}V / ${c.frequency}Hz · ${c.plugTypes.join(', ')}`}
+          label="전압·플러그"
+          value={`${c.voltage}V / ${c.frequency}Hz · ${c.plugTypes.join(', ')}`}
         >
-            {/* ✅ 여기에서 실제 사진 뱃지 렌더 */}
-            <div className="mt-3 flex flex-wrap gap-3">
+          {/* ✅ 실제 사진 뱃지 렌더 */}
+          <div className="mt-3 flex flex-wrap gap-3">
             {c.plugTypes.map((t) => (
-                <PlugPhotos key={t} type={t} size={72} />
+              <PlugPhotos key={t} type={t} size={72} />
             ))}
+            {/* 하단: 전압/플러그 경고 박스 (추가) */}
+            <div
+              role="note"
+              className="mt-2 rounded-lg border-l-4 border-red-400 bg-red-50 p-3 text-xs leading-relaxed text-red-900">
+              드라이어·고데기가 <strong>프리볼트(100–240V)</strong>가 아니면 사용을 피하세요.
+              어댑터는 <em>플러그 모양</em>만 바꿉니다. <span className="whitespace-nowrap">(변압기 아님)</span>
             </div>
-
-            {/* 필요하면 간단 SVG 폴백도 함께 노출 (선택) */}
-            {/* <div className="mt-2 flex flex-wrap gap-2">
-            {c.plugTypes.map((t) => <PlugBadge key={t} type={t} />)}
-            </div> */}
+          </div>
         </InfoCard>
         <InfoCard label="eSIM 팁" value={c.esimNote} />
         <InfoCard label="기후 한줄 요약" value={c.climateNote} />
@@ -394,17 +375,24 @@ export default async function CountryPage({ params }: PageProps) {
       {/* 시차/환율 */}
       <section className="mt-6 grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border p-4">
-            <div className="text-xs text-gray-500">시차/현지 시각</div>
-            <div className="mt-1"><LocalTime tz={tz} /></div>
+          <div className="text-xs text-gray-500">시차/현지 시각</div>
+          <div className="mt-1"><LocalTime tz={tz} /></div>
         </div>
         <div className="rounded-2xl border p-4">
-            <div className="text-xs text-gray-500">환율</div>
-            <div className="mt-1 text-xs text-gray-500">통화: {ccy || '—'}</div>
-            <div className="mt-2">
-                {ccy ? <FxCard base={ccy} quote="KRW" /> : <span className="text-sm">통화 정보 없음</span>}
-            </div>
-            <div className="mt-2 text-[11px] text-gray-400">※ 정보 제공용. 실제 결제 환율과 다를 수 있습니다.</div>
+          <div className="text-xs text-gray-500">환율</div>
+          <div className="mt-1 text-xs text-gray-500">통화: {ccy || '—'}</div>
+          <div className="mt-2">
+            {ccy ? <FxCard base={ccy} quote="KRW" /> : <span className="text-sm">통화 정보 없음</span>}
+          </div>
+          <div className="mt-2 text-[11px] text-gray-400">※ 정보 제공용. 실제 결제 환율과 다를 수 있습니다.</div>
         </div>
+      </section>
+
+      {/* 월별 패킹 빠른 링크 */}
+      <section className="mt-8">
+        <h2 className="text-xl font-medium">월별 패킹</h2>
+        <p className="mt-1 text-sm text-gray-500">최근 3개월 바로가기</p>
+        <PackingQuickLinks countrySlug={c.slug} />
       </section>
 
       {/* FAQ (실제 표시) */}
@@ -426,7 +414,7 @@ export default async function CountryPage({ params }: PageProps) {
         <AffiliateKit countrySlug={c.slug} />
       </section>
 
-      {/* CTA ↓↓↓ (요청대로 제휴 밑으로 이동) */}
+      {/* CTA */}
       <section className="mt-8">
         <a href={`/?country=${c.slug}`} className="inline-flex items-center rounded-xl border px-4 py-2 hover:bg-gray-50">
           공항/날짜 선택하고 상세 확인하기
@@ -452,7 +440,7 @@ export default async function CountryPage({ params }: PageProps) {
 
 function InfoCard(
   { label, value, children }:
-  { label: string; value: string; children?: React.ReactNode }
+  { label: string; value: string; children?: ReactNode }
 ) {
   return (
     <div className="rounded-2xl border p-4">
