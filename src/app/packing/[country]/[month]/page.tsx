@@ -6,7 +6,8 @@ import {
   MONTH_SLUGS,
   findCountryBySlug,
   isMonthSlug,
-  // MonthSlug  // ← 굳이 타입 엄격히 안 갈 거면 임포트 생략해도 됩니다
+  getCountryMonthlyClimate,
+  type MonthSlug,
 } from "@/lib/countries";
 import { deriveMonthlyClimate, buildPackingAdvice } from "@/lib/packing";
 import PackingChecklist from "@/components/PackingChecklist";
@@ -15,14 +16,14 @@ import { PackingFAQJsonLd, ItemListJsonLd, BreadcrumbsJsonLd } from "@/lib/schem
 
 export const revalidate = 86400;
 
-// ✅ 동기로 간단히: Next가 알아서 처리합니다. 굳이 Promise 타입 지정하지 마세요.
+// 정적 경로 생성
 export function generateStaticParams() {
   return COUNTRY_SLUGS.flatMap((country) =>
     MONTH_SLUGS.map((month) => ({ country, month }))
   );
 }
 
-// ✅ params는 "객체"로 받습니다 (Promise 아님)
+// 메타데이터
 export async function generateMetadata(
   props: { params: Promise<{ country: string; month: string }> }
 ): Promise<Metadata> {
@@ -33,41 +34,61 @@ export async function generateMetadata(
   const desc = country
     ? `${country.flag} ${country.nameKo}의 ${m}월 체감 날씨·권장 복장·체크리스트·PDF`
     : "여행 패킹 체크리스트";
+  const canonical = `/packing/${countrySlug}/${month}`;
   return {
     title,
     description: desc,
-    alternates: { canonical: `/packing/${country}/${month}` },
+    alternates: { canonical },
     openGraph: {
       title,
       description: desc,
       type: "article",
-      url: `/packing/${country}/${month}`,
+      url: canonical,
     },
   };
 }
 
-// ✅ 여기서도 동일하게 "객체"로 받습니다
-export default async function Page(
-    props: { params: Promise<{ country: string; month: string }> }
-) {
-    const { country: countrySlug, month: monthSlug } = await props.params;
-    const country = findCountryBySlug(countrySlug);
-    if (!country || !isMonthSlug(monthSlug)) { notFound(); }
-    const month = Number(monthSlug);
+// 권장 복장 요약에서 '복장 아님' 키워드 제거
+const EXCLUDE_NON_CLOTHING = [
+  /전원/i, /플러그/i, /어댑터/i,
+  /멀티\s*어댑터/i, /멀티\s*탭/i,
+  /보조\s*배터리/i, /배터리/i, /충전기/i,
+];
 
+export default async function Page(
+  props: { params: Promise<{ country: string; month: string }> }
+) {
+  const { country: countrySlug, month: monthSlug } = await props.params;
+  const country = findCountryBySlug(countrySlug);
+  if (!country || !isMonthSlug(monthSlug)) notFound();
+  const month = Number(monthSlug);
+
+  // 기후/패킹 조언
   const climate = deriveMonthlyClimate(country, month);
   const advice = buildPackingAdvice(country, month, climate);
 
+  // 월 인덱스(0..11)와 평균 최저/최고
+  const monthIdx = MONTH_SLUGS.indexOf(monthSlug as MonthSlug); // 0..11
+  const mc = getCountryMonthlyClimate(country.slug);
+  const avgMin = mc?.avgMinC?.[monthIdx];
+  const avgMax = mc?.avgMaxC?.[monthIdx];
+
+  // 권장 복장 요약에서 비복장 문구 제거
+  const clothingThreeLine = advice.threeLine.filter(
+    (t: string) => !EXCLUDE_NON_CLOTHING.some((rx) => rx.test(t))
+  );
+
+  // 체크리스트 데이터(원형은 유지)
   const checklistData = {
-    "상의": advice.tops.map((label) => ({ label })),
-    "하의": advice.bottoms.map((label) => ({ label })),
-    "겉옷": advice.outer.map((label) => ({ label })),
-    "신발": advice.shoes.map((label) => ({ label })),
-    "액세서리": advice.accessories.map((label) => ({ label })),
-    "전자/전력": advice.electronics.map((label) => ({ label })),
-    "의약/위생": advice.health.map((label) => ({ label })),
-    "문서/금융": advice.docs.map((label) => ({ label })),
-    "기타": advice.etc.map((label) => ({ label })),
+    "상의": advice.tops.map((label: string) => ({ label })),
+    "하의": advice.bottoms.map((label: string) => ({ label })),
+    "겉옷": advice.outer.map((label: string) => ({ label })),
+    "신발": advice.shoes.map((label: string) => ({ label })),
+    "액세서리": advice.accessories.map((label: string) => ({ label })),
+    "전자/전력": advice.electronics.map((label: string) => ({ label })),
+    "의약/위생": advice.health.map((label: string) => ({ label })),
+    "문서/금융": advice.docs.map((label: string) => ({ label })),
+    "기타": advice.etc.map((label: string) => ({ label })),
   } as const;
 
   const season = country.seasonTagByMonth[month];
@@ -102,18 +123,39 @@ export default async function Page(
 
       {/* 핵심 카드 */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
+        {/* 이달 체감 날씨 */}
         <div className="border rounded-xl p-4">
           <h2 className="font-semibold mb-1">이달 체감 날씨</h2>
           <p className="text-sm">{climate.summary}</p>
+
+          {/* 평균 최저/최고 기온 (없으면 — 로 표시) */}
+          <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+            <div className="rounded-lg border px-3 py-2">
+              <p className="text-gray-500">평균 최저</p>
+              <p className="font-medium">
+                {avgMin !== undefined ? `${avgMin.toFixed(1)}°C` : "—"}
+              </p>
+            </div>
+            <div className="rounded-lg border px-3 py-2">
+              <p className="text-gray-500">평균 최고</p>
+              <p className="font-medium">
+                {avgMax !== undefined ? `${avgMax.toFixed(1)}°C` : "—"}
+              </p>
+            </div>
+          </div>
         </div>
+
+        {/* 권장 복장 요약 (비복장 문구 제거) */}
         <div className="border rounded-xl p-4">
           <h2 className="font-semibold mb-1">권장 복장 요약</h2>
           <ul className="text-sm list-disc ml-5">
-            {advice.threeLine.map((t, i) => (
+            {clothingThreeLine.map((t: string, i: number) => (
               <li key={i}>{t}</li>
             ))}
           </ul>
         </div>
+
+        {/* 우/방수/충전 팁 (복장 요약과는 분리 유지) */}
         <div className="border rounded-xl p-4">
           <h2 className="font-semibold mb-1">우/방수/충전 팁</h2>
           <p className="text-sm">우산/방수자켓, 멀티어댑터, 보조배터리는 필수급.</p>
@@ -133,18 +175,14 @@ export default async function Page(
           <a className="border rounded-xl p-3 text-center" href={`/destinations/${country.slug}`}>
             해당 국가 상세로 이동
           </a>
-          {/*<a className="border rounded-xl p-3 text-center" href={`/destinations/${country.slug}#baggage`}>
-            이번 달 항공/수하물 규정 확인
-          </a>*/}
           <a className="border rounded-xl p-3 text-center" href={`/packing/${country.slug}`}>
             {country.nameKo} 월별 패킹 인덱스
           </a>
         </div>
       </section>
 
-      {/* 제휴 고정 블록 */}
+      {/* 제휴 고지 */}
       <section className="mt-10">
-        {/* <AffiliateBlock variant="packing" country={country} /> */}
         <p className="text-xs text-gray-500 mt-2">
           일부 링크는 제휴 링크이며, <span className="underline">{'rel="sponsored"'}</span>가 적용됩니다.
         </p>
