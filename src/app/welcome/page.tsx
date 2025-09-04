@@ -1,7 +1,7 @@
-// src/app/page.tsx  (Server Component)
+// Server Component
 import Link from "next/link";
 
-export default function Home() {
+export default function Welcome() {
   return (
     <>
       {/* Hero */}
@@ -13,9 +13,9 @@ export default function Home() {
           비자·전원 플러그·패킹·eSIM을 한 곳에서. PDF로 저장하고 공유하세요.
         </p>
         <div className="mt-8 flex justify-center gap-3">
-          {/* ✅ 폼 전용 페이지로 이동 */}
+          {/* ✅ 기능 홈으로 이동 */}
           <Link
-            href="/start"
+            href="/"
             className="rounded-2xl bg-teal-600 px-5 py-3 text-white font-medium hover:bg-teal-700"
             data-gtag="cta_start"
           >
@@ -112,8 +112,7 @@ export default function Home() {
           ))}
         </div>
         <div className="mt-8 text-center">
-          {/* ✅ 폼 전용 페이지로 이동 */}
-          <Link href="/start" className="rounded-2xl bg-teal-600 px-5 py-3 text-white font-medium">
+          <Link href="/" className="rounded-2xl bg-teal-600 px-5 py-3 text-white font-medium">
             지금 시작하기
           </Link>
         </div>
