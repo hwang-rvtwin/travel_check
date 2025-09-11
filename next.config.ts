@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'image1.coupangcdn.com' },
       { protocol: 'https', hostname: 'image2.coupangcdn.com' },
       { protocol: 'https', hostname: 'image3.coupangcdn.com' },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
   },
 };

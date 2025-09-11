@@ -1,122 +1,232 @@
-// Server Component
+// src/app/page.tsx
 import Link from "next/link";
 
-export default function Welcome() {
+export default function Home() {
   return (
-    <>
-      {/* Hero */}
-      <section className="pt-16 pb-14 text-center">
-        <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
-          출국 전, <span className="text-teal-600">한 번에 체크</span>
-        </h1>
-        <p className="mt-4 text-base md:text-lg text-gray-600">
-          비자·전원 플러그·패킹·eSIM을 한 곳에서. PDF로 저장하고 공유하세요.
-        </p>
-        <div className="mt-8 flex justify-center gap-3">
-          {/* ✅ 기능 홈으로 이동 */}
-          <Link
-            href="/"
-            className="rounded-2xl bg-teal-600 px-5 py-3 text-white font-medium hover:bg-teal-700"
-            data-gtag="cta_start"
-          >
-            여행 체크 시작
-          </Link>
-          <Link href="/power-plugs" className="rounded-2xl border px-5 py-3 font-medium hover:bg-gray-50">
-            전원 플러그 보기
-          </Link>
-        </div>
-      </section>
+    <main className="relative">
+      <section className="mx-auto max-w-7xl px-4 pt-12 md:pt-16 ">
+        <div className="grid items-center gap-10 md:grid-cols-[1.15fr,0.85fr]">
+          <div>
+            <h1 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight bg-gradient-to-r text-sky-600">
+              체크허브<span className="text-black">에 대해</span>
+            </h1>
 
-      {/* 빠른 시작 */}
-      <section className="py-10">
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[
-            { title: "월별 패킹", href: "/packing", desc: "옷/신발/겉옷, 이달 체감 날씨" },
-            { title: "전원 플러그", href: "/power-plugs", desc: "타입·전압·주파수·주의" },
-            { title: "eSIM", href: "/esim", desc: "여행 데이터 준비" },
-          ].map((c) => (
-            <Link key={c.title} href={c.href} className="rounded-2xl border p-5 hover:shadow-sm transition">
-              <h3 className="font-semibold">{c.title}</h3>
-              <p className="mt-1 text-sm text-gray-600">{c.desc}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 인기 국가 */}
-      <section className="py-6">
-        <h2 className="text-xl font-semibold">인기 국가</h2>
-        <div className="mt-4 grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
-          {[
-            { n: "일본", s: "japan" },
-            { n: "미국", s: "united-states" },
-            { n: "영국", s: "united-kingdom" },
-            { n: "싱가포르", s: "singapore" },
-            { n: "베트남", s: "vietnam" },
-            { n: "호주", s: "australia" },
-            { n: "뉴질랜드", s: "new-zealand" },
-            { n: "아랍에미리트", s: "united-arab-emirates" },
-          ].map((g) => (
-            <Link key={g.s} href={`/destinations/${g.s}`} className="rounded-2xl border p-4">
-              <span className="font-medium">{g.n}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 작동 방식 */}
-      <section className="py-14">
-        <h2 className="text-xl font-semibold text-center">어떻게 동작하나요</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {[
-            { t: "1) 국가/공항 선택", d: "출국지·도착지를 고르면" },
-            { t: "2) 규정·준비물 확인", d: "비자/전원/패킹/통신 체크" },
-            { t: "3) PDF로 저장", d: "오프라인/공유도 OK" },
-          ].map((s) => (
-            <div key={s.t} className="rounded-2xl border p-5">
-              <h3 className="font-semibold">{s.t}</h3>
-              <p className="mt-1 text-sm text-gray-600">{s.d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* SEO/설명 + 광고 슬롯(중단) */}
-      <section className="py-10">
-        <div className="prose max-w-none">
-          <h2>여행 체크허브가 필요한 이유</h2>
-          <p>입국 규정은 수시로 바뀝니다. 각국 공식 출처를 함께 제시하고 요약해 드려요.</p>
-        </div>
-        {/* AdSense: 예약 높이로 CLS 방지 */}
-        <div className="mt-6 grid place-items-center">
-          <div className="w-full max-w-3xl">
-            <div style={{ minHeight: 320 }} className="border rounded-2xl">
-              {/* <ins class="adsbygoogle" data-ad-slot="xxxx" ... /> */}
-            </div>
+            {/* key bullets */}
+            <ul className="my-6 grid max-w-xl grid-cols-1 gap-2 text-sm text-slate-600 md:grid-cols-2">
+              {[
+                "정부·대사관·항공사 공식 문서 기반",
+                "전원 플러그 규정 요약",
+                "국가별 패킹 가이드",
+                "PDF 파일 지원",
+              ].map((t) => (
+                <li key={t} className="inline-flex items-center gap-2">
+                  <span className="inline-flex size-5 items-center justify-center rounded-full bg-white/90 text-xs text-sky-700 ring-2 ring-sky-200 dark:text-sky-300">
+                    ✓
+                  </span>
+                  {t}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* FAQ + CTA */}
-      <section className="py-14">
-        <h2 className="text-xl font-semibold text-center">자주 묻는 질문</h2>
-        <div className="mt-6 grid gap-3 md:grid-cols-2">
+      {/* ===== 체크허브가 필요한 이유 ===== */}
+      <section className="mx-auto max-w-7xl mb-5 ">
+        <ol className="grid  md:grid-cols-3">
           {[
-            { q: "정보 출처는 무엇인가요?", a: "정부/대사관/IATA/항공사/공식문서 기반." },
-            { q: "광고/제휴 정책?", a: "명시적 표기, sponsored rel 적용." },
-          ].map((f) => (
-            <details key={f.q} className="rounded-2xl border p-5">
-              <summary className="font-medium cursor-pointer">{f.q}</summary>
-              <p className="mt-2 text-sm text-gray-600">{f.a}</p>
-            </details>
+            {
+              t: "최신성",
+              d: "입국 규정은 수시로 변경됩니다. 각국 공식 출처 함께 제시하고 요약해 드려요.",
+            },
+            {
+              t: "정확성",
+              d: "정부·대사관·IATA·항공사 문서를 교차 검증해 제공합니다.",
+            },
+            {
+              t: "현실성",
+              d: "여행 가방에 담는 현실적인 항목 위주로, 불필요한 사항을 줄였습니다.",
+            },
+          ].map((s, i) => (
+            <li key={s.t} className="rounded-2xl bg-white/70 p-5">
+              <div className="flex items-start justify-between gap-3">
+                <span className="inline-flex size-7 items-center justify-center rounded-full bg-sky-600 text-sm font-bold text-white">
+                  {i + 1}
+                </span>
+              </div>
+              <h3 className="mt-3 font-semibold ">{s.t}</h3>
+              <p className="mt-1 text-sm text-slate-600 ">{s.d}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* ===== 페이지 이동 버튼 ===== */}
+      <section className="mx-auto max-w-7xl px-4 py-10 bg-sky-50/80">
+        <h2 className="mb-5 text-lg font-semibold md:text-xl">
+          출국 전 체크 가이드
+        </h2>
+        <div className="grid gap-4 md:grid-cols-4">
+          {[
+            {
+              title: "월별 패킹",
+              href: "/packing",
+              desc: "옷·신발·겉옷·이달 체감 기온",
+              icon: (
+                <svg viewBox="0 0 24 24" className="size-5">
+                  <path
+                    d="M4 6h16M4 12h16M4 18h10"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              ),
+            },
+            {
+              title: "수하물 반입 제한",
+              href: "/baggage",
+              desc: "리튬·액체·기내/위탁",
+              icon: (
+                <svg viewBox="0 0 24 24" className="size-5">
+                  <path
+                    d="M7 7V5a3 3 0 0 1 6 0v2"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <rect
+                    x="4"
+                    y="7"
+                    width="16"
+                    height="12"
+                    rx="3"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                </svg>
+              ),
+            },
+            {
+              title: "전원 플러그",
+              href: "/power-plugs",
+              desc: "플러그 타입·전압·주파수",
+              icon: (
+                <svg viewBox="0 0 24 24" className="size-5">
+                  <path
+                    d="M9 5v6m6-6v6M7 11h10v4a5 5 0 0 1-10 0v-4Z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                </svg>
+              ),
+            },
+            {
+              title: "eSIM/통신",
+              href: "/esim",
+              desc: "여행 중 데이터 준비",
+              icon: (
+                <svg viewBox="0 0 24 24" className="size-5">
+                  <path
+                    d="M7 3h6l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <path
+                    d="M8 12h8M8 16h6"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              ),
+            },
+          ].map((m) => (
+            <Link
+              key={m.title}
+              href={m.href}
+              className="group rounded-2xl bg-white/75 p-5 shadow-md backdrop-blur transition hover:-translate-y-0.5 hover:shadow-lg"
+            >
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl border p-2 text-sky-600 ">
+                  {m.icon}
+                </div>
+                <div>
+                  <h3 className="font-semibold">{m.title}</h3>
+                  <p className="mt-0.5 text-sm text-slate-600 ">{m.desc}</p>
+                </div>
+              </div>
+              <div className="mt-4 text-xs text-slate-500">
+                자세히 보기{" "}
+                <span className="inline-block transition group-hover:translate-x-0.5">
+                  →
+                </span>
+              </div>
+            </Link>
           ))}
         </div>
-        <div className="mt-8 text-center">
-          <Link href="/" className="rounded-2xl bg-teal-600 px-5 py-3 text-white font-medium">
-            지금 시작하기
-          </Link>
+      </section>
+
+      {/* ===== 출국 전 가이드 ===== */}
+      <section className="mx-auto max-w-7xl px-4 py-10 ">
+        <h2 className="text-lg font-semibold md:text-xl">
+          출국 전 체크 가이드
+        </h2>
+        <ol className="mt-5">
+          {[
+            { t: "여권/비자", d: "만료일 · ESTA/ETA · 비자 확인" },
+            { t: "항공/수하물", d: "기내/위탁 · 리튬/액체 규정" },
+            { t: "통신/금융", d: "eSIM/로밍 · 해외결제/현금" },
+            { t: "건강/보험", d: "예방접종 · 여행자 보험 증서" },
+            { t: "전원/플러그", d: "플러그 타입·전압 · 어댑터" },
+            { t: "PDF 저장/공유", d: "체크 후 문서로 보관" },
+          ].map((s, i) => (
+            <li key={s.t} className="relative rounded-2xl p-5 pl-16">
+              <span className="absolute left-5 top-5 inline-flex size-7 items-center justify-center rounded-full bg-sky-600 text-sm font-bold text-white">
+                {i + 1}
+              </span>
+              <h3 className="font-semibold">{s.t}</h3>
+              <p className="mt-1 text-sm text-zinc-600 dark:text-white/60">
+                {s.d}
+              </p>
+              {/* flight path line */}
+              {i < 5 && (
+                <span
+                  aria-hidden
+                  className="absolute left-8 top-14 h-8 w-px"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(180deg, rgba(0,0,0,0.35) 0, rgba(0,0,0,0.35) 6px, transparent 6px, transparent 12px)",
+                  }}
+                />
+              )}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* ===== Bottom ===== */}
+      <section className="mx-auto max-w-7xl text-center bg-sky-50/80">
+        <div className="overflow-hidden rounded-2xl p-10 backdrop-blur">
+          <div className="grid items-center gap-6 md:grid-cols-[1.2fr,0.8fr]">
+            <div>
+              <h3 className="text-base font-semibold">
+                필요한 것만 골라 한 번에 체크,
+              </h3>
+              <p className="mt-1 text-sm text-slate-600">
+                체크리스트를 PDF로 저장하고 공유하세요!
+              </p>
+              <div className="mt-6">
+                <Link
+                  href="/builder"
+                  className="inline-flex items-center rounded-xl bg-sky-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-sky-700"
+                >
+                  체크리스트 만들기 →
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
-    </>
+    </main>
   );
 }

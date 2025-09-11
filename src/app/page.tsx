@@ -1,123 +1,204 @@
-// src/app/page.tsx  (Server Component)
+// src/app/page.tsx
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+
+const SLIDES = [
+  {
+    src: "/slides/checkhub_preview.jpg",
+    alt: "여행 체크",
+  },
+  {
+    src: "/slides/monthly_packing_guide.jpg",
+    alt: "패킹",
+  },
+];
 
 export default function Home() {
   return (
-    <>
-      {/* Hero */}
-      <section className="pt-16 pb-14 text-center">
-        <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
-          출국 전, <span className="text-teal-600">한 번에 체크</span>
-        </h1>
-        <p className="mt-4 text-base md:text-lg text-gray-600">
-          비자·전원 플러그·패킹·eSIM을 한 곳에서. PDF로 저장하고 공유하세요.
-        </p>
-        <div className="mt-8 flex justify-center gap-3">
-          {/* ✅ 폼 전용 페이지로 이동 */}
-          <Link
-            href="/start"
-            className="rounded-2xl bg-teal-600 px-5 py-3 text-white font-medium hover:bg-teal-700"
-            data-gtag="cta_start"
-          >
-            여행 체크 시작
-          </Link>
-          <Link href="/power-plugs" className="rounded-2xl border px-5 py-3 font-medium hover:bg-gray-50">
-            전원 플러그 보기
-          </Link>
-        </div>
-      </section>
-
-      {/* 빠른 시작 */}
-      <section className="py-10">
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[
-            { title: "월별 패킹", href: "/packing", desc: "옷/신발/겉옷, 이달 체감 날씨" },
-            { title: "전원 플러그", href: "/power-plugs", desc: "타입·전압·주파수·주의" },
-            { title: "eSIM", href: "/esim", desc: "여행 데이터 준비" },
-          ].map((c) => (
-            <Link key={c.title} href={c.href} className="rounded-2xl border p-5 hover:shadow-sm transition">
-              <h3 className="font-semibold">{c.title}</h3>
-              <p className="mt-1 text-sm text-gray-600">{c.desc}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 인기 국가 */}
-      <section className="py-6">
-        <h2 className="text-xl font-semibold">인기 국가</h2>
-        <div className="mt-4 grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
-          {[
-            { n: "일본", s: "japan" },
-            { n: "미국", s: "united-states" },
-            { n: "영국", s: "united-kingdom" },
-            { n: "싱가포르", s: "singapore" },
-            { n: "베트남", s: "vietnam" },
-            { n: "호주", s: "australia" },
-            { n: "뉴질랜드", s: "new-zealand" },
-            { n: "아랍에미리트", s: "united-arab-emirates" },
-          ].map((g) => (
-            <Link key={g.s} href={`/destinations/${g.s}`} className="rounded-2xl border p-4">
-              <span className="font-medium">{g.n}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 작동 방식 */}
-      <section className="py-14">
-        <h2 className="text-xl font-semibold text-center">어떻게 동작하나요</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {[
-            { t: "1) 국가/공항 선택", d: "출국지·도착지를 고르면" },
-            { t: "2) 규정·준비물 확인", d: "비자/전원/패킹/통신 체크" },
-            { t: "3) PDF로 저장", d: "오프라인/공유도 OK" },
-          ].map((s) => (
-            <div key={s.t} className="rounded-2xl border p-5">
-              <h3 className="font-semibold">{s.t}</h3>
-              <p className="mt-1 text-sm text-gray-600">{s.d}</p>
+    <main className="relative">
+      <section className="mx-auto max-w-7xl px-4 pt-12 md:pt-16">
+        <div className="grid items-center gap-10 md:grid-cols-[1.15fr,0.85fr]">
+          {/* Title Content */}
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 text-sm text-slate-700">
+              <span className="inline-block size-2 rounded-full bg-sky-500" />
+              간편하게 출국 준비✈️
             </div>
-          ))}
-        </div>
-      </section>
+            <h1 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight md:text-5xl">
+              출국 체크리스트,
+              <br />
+              <span className="bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                비행 전 꼭 필요한 것만
+              </span>
+            </h1>
+            <p className="mt-4 max-w-2xl text-sm text-slate-700 md:text-base ">
+              목적지의 <b>비자·전원 플러그·패킹·eSIM</b>까지 한 번에 확인할 수
+              있습니다.
+            </p>
+            <p className="max-w-2xl text-sm text-slate-700 md:text-base ">
+              체크리스트를 <b>PDF로 저장</b>하고 공유하세요!
+            </p>
 
-      {/* SEO/설명 + 광고 슬롯(중단) */}
-      <section className="py-10">
-        <div className="prose max-w-none">
-          <h2>여행 체크허브가 필요한 이유</h2>
-          <p>입국 규정은 수시로 바뀝니다. 각국 공식 출처를 함께 제시하고 요약해 드려요.</p>
-        </div>
-        {/* AdSense: 예약 높이로 CLS 방지 */}
-        <div className="mt-6 grid place-items-center">
-          <div className="w-full max-w-3xl">
-            <div style={{ minHeight: 320 }} className="border rounded-2xl">
-              {/* <ins class="adsbygoogle" data-ad-slot="xxxx" ... /> */}
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/start"
+                className="rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-sky-700"
+              >
+                시작하기 →
+              </Link>
+              <Link
+                href="/destinations"
+                className="rounded-xl px-5 py-3 text-sm font-medium text-slate-800 shadow-sm hover:bg-gray-50"
+              >
+                국가별 정보
+              </Link>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* FAQ + CTA */}
-      <section className="py-14">
-        <h2 className="text-xl font-semibold text-center">자주 묻는 질문</h2>
-        <div className="mt-6 grid gap-3 md:grid-cols-2">
-          {[
-            { q: "정보 출처는 무엇인가요?", a: "정부/대사관/IATA/항공사/공식문서 기반." },
-            { q: "광고/제휴 정책?", a: "명시적 표기, sponsored rel 적용." },
-          ].map((f) => (
-            <details key={f.q} className="rounded-2xl border p-5">
-              <summary className="font-medium cursor-pointer">{f.q}</summary>
-              <p className="mt-2 text-sm text-gray-600">{f.a}</p>
-            </details>
-          ))}
-        </div>
-        <div className="mt-8 text-center">
-          {/* ✅ 폼 전용 페이지로 이동 */}
-          <Link href="/start" className="rounded-2xl bg-teal-600 px-5 py-3 text-white font-medium">
-            지금 시작하기
-          </Link>
+          {/* FlightPlan Card */}
+          <div className="overflow-hidden rounded-3xl bg-white/75 shadow-lg">
+            <div className="flex items-center  justify-between border-b px-5 pt-5 py-3 text-xs text-slate-300 ">
+              <div className="inline-flex items-center gap-2 font-medium text-slate-500">
+                <span className="inline-flex size-6 items-center justify-center rounded-full bg-sky-100 ">
+                  ✈️
+                </span>
+                {"You can't go abroad without CheckHub"}
+              </div>
+              <div className="text-slate-500">{"I'm done packing!"}</div>
+            </div>
+
+            {/* simple route + items */}
+            <div className="grid gap-0 md:grid-cols-[1fr,1px,1fr] bg-gradient-to-t to-white via-white/80 from-sky-50 ">
+              {/* route */}
+              <div className="px-10 pb-10 pt-5">
+                <div className="text-[11px] uppercase tracking-wide text-slate-500">
+                  Route
+                </div>
+                <div className="mt-1 flex items-end gap-3">
+                  <div className="text-xl font-black tracking-tight">
+                    Departure
+                  </div>
+                  <svg viewBox="0 0 200 24" className="h-5 w-16 text-sky-600">
+                    <line
+                      x1="0"
+                      y1="5"
+                      x2="200"
+                      y2="5"
+                      stroke="currentColor"
+                      strokeDasharray="15 5"
+                      strokeWidth="4"
+                    />
+                  </svg>
+                  <div className="text-xl font-black tracking-tight">
+                    Arrival
+                  </div>
+                </div>
+
+                {/* 자동 슬라이드 캐러셀 */}
+                <div className="mt-5">
+                  <AutoCarousel images={SLIDES} interval={6000} />
+                </div>
+              </div>
+            </div>
+          </div>
+          {/*  */}
         </div>
       </section>
-    </>
+    </main>
+  );
+}
+
+/* ========================================================================= */
+function AutoCarousel({
+  images,
+  interval = 6000,
+}: {
+  images: { src: string; alt: string }[];
+  interval?: number;
+}) {
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const id = setInterval(
+      () => setIdx((i) => (i + 1) % images.length),
+      interval
+    );
+    return () => clearInterval(id);
+  }, [images.length, interval]);
+
+  const prev = () => setIdx((i) => (i - 1 + images.length) % images.length);
+  const next = () => setIdx((i) => (i + 1) % images.length);
+
+  return (
+    <div className="relative overflow-hidden rounded-xl drop-shadow-lg">
+      {/* 컨테이너는 relative + 명시적 높이 → fill 동작 */}
+      <div className="relative h-56 w-full sm:h-96 md:h-[600px]">
+        {images.map((img, i) => (
+          <Image
+            key={img.src}
+            src={img.src}
+            alt={img.alt}
+            fill
+            className={[
+              "absolute inset-0 object-cover transition-opacity duration-700",
+              i === idx ? "opacity-100" : "opacity-0",
+            ].join(" ")}
+            sizes="(min-width: 1024px) 800px, (min-width: 640px) 600px, 100vw"
+            priority={i === 0}
+          />
+        ))}
+      </div>
+
+      {/* 좌우 컨트롤 */}
+      <button
+        type="button"
+        aria-label="이전 슬라이드"
+        onClick={prev}
+        className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/50 p-1 text-slate-700 shadow hover:bg-white/80"
+      >
+        <svg viewBox="0 0 24 24" className="size-4">
+          <path
+            d="M15 5l-7 7 7 7"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            fill="none"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
+      <button
+        type="button"
+        aria-label="다음 슬라이드"
+        onClick={next}
+        className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/50 p-1 text-slate-700 shadow hover:bg-white/80"
+      >
+        <svg viewBox="0 0 24 24" className="size-4">
+          <path
+            d="M9 5l7 7-7 7"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            fill="none"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
+
+      {/* 인디케이터 */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-2 flex justify-center gap-2">
+        {images.map((_, i) => (
+          <span
+            key={i}
+            className={[
+              "h-2 w-2 rounded-full",
+              i === idx ? "bg-slate-800/80" : "bg-white/70",
+            ].join(" ")}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
