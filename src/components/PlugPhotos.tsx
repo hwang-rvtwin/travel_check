@@ -19,10 +19,10 @@ export default function PlugPhotos({ type, size = 80 }: Props) {
 
   return (
     // 컨테이너를 세로 스택으로 바꿔서: 위(아이콘 행) + 아래(경고 박스)
-    <div className="rounded-xl border bg-zinc-800/5 p-2">
+    <div className="rounded-xl bg-zinc-800/5 p-3">
       {/* 상단: 기존 행 레이아웃 그대로 */}
       <div className="flex items-center gap-3">
-        <div className="rounded-lg bg-black/5 p-2">
+        <div className="rounded-lg bg-black/5 p-2 shadow-md">
           <Image
             src={plugSrc}
             alt={`${label} plug`}
@@ -31,7 +31,7 @@ export default function PlugPhotos({ type, size = 80 }: Props) {
             onError={() => setPlugSrc(phPlug)}
           />
         </div>
-        <div className="rounded-lg bg-black/5 p-2">
+        <div className="rounded-lg bg-black/5 p-2 shadow-md">
           <Image
             src={sockSrc}
             alt={`${label} socket`}

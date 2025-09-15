@@ -1,6 +1,10 @@
+// src/app/layout.tsx
 // Server Component
 import type { Metadata } from "next";
+
+// ✅ 전역 CSS (프로젝트 공통)
 import "./globals.css";
+
 import Nav from "../components/layout/Nav";
 import Footer from "../components/layout/Footer";
 
@@ -20,7 +24,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko" className="scroll-smooth">
       <body className="min-h-screen bg-white text-gray-900 antialiased">
-        {/* (필요 시) providers/analytics 등 기존 전역 Provider를 여기에 그대로 유지하세요 */}
         <Nav />
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{children}</main>
         <Footer />

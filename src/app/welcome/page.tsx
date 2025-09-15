@@ -12,7 +12,7 @@ export default function Home() {
             </h1>
 
             {/* key bullets */}
-            <ul className="my-6 grid max-w-xl grid-cols-1 gap-2 text-sm text-slate-600 md:grid-cols-2">
+            <ul className="mt-10 mb-5 grid max-w-xl grid-cols-1 gap-2 text-sm text-slate-600 md:grid-cols-2">
               {[
                 "정부·대사관·항공사 공식 문서 기반",
                 "전원 플러그 규정 요약",
@@ -32,8 +32,8 @@ export default function Home() {
       </section>
 
       {/* ===== 체크허브가 필요한 이유 ===== */}
-      <section className="mx-auto max-w-7xl mb-5 ">
-        <ol className="grid  md:grid-cols-3">
+      <section className="mx-auto max-w-7xl mb-5">
+        <ol className="grid gap-4 md:grid-cols-3">
           {[
             {
               t: "최신성",
@@ -47,15 +47,17 @@ export default function Home() {
               t: "현실성",
               d: "여행 가방에 담는 현실적인 항목 위주로, 불필요한 사항을 줄였습니다.",
             },
-          ].map((s, i) => (
+          ].map((s) => (
             <li key={s.t} className="rounded-2xl bg-white/70 p-5">
-              <div className="flex items-start justify-between gap-3">
-                <span className="inline-flex size-7 items-center justify-center rounded-full bg-sky-600 text-sm font-bold text-white">
-                  {i + 1}
-                </span>
-              </div>
-              <h3 className="mt-3 font-semibold ">{s.t}</h3>
-              <p className="mt-1 text-sm text-slate-600 ">{s.d}</p>
+              {/* 번호 배지 제거, 파란 원 아이콘 추가 */}
+              <h3 className="flex items-center gap-2 font-semibold">
+                <span
+                  aria-hidden
+                  className="inline-block size-2 rounded-full bg-sky-600"
+                />
+                {s.t}
+              </h3>
+              <p className="mt-1.5 text-sm text-slate-600">{s.d}</p>
             </li>
           ))}
         </ol>
@@ -63,9 +65,7 @@ export default function Home() {
 
       {/* ===== 페이지 이동 버튼 ===== */}
       <section className="mx-auto max-w-7xl px-4 py-10 bg-sky-50/80">
-        <h2 className="mb-5 text-lg font-semibold md:text-xl">
-          출국 전 체크 가이드
-        </h2>
+        <h2 className="mb-5 text-lg font-semibold md:text-xl">체크 가이드</h2>
         <div className="grid gap-4 md:grid-cols-4">
           {[
             {
@@ -167,11 +167,8 @@ export default function Home() {
       </section>
 
       {/* ===== 출국 전 가이드 ===== */}
-      <section className="mx-auto max-w-7xl px-4 py-10 ">
-        <h2 className="text-lg font-semibold md:text-xl">
-          출국 전 체크 가이드
-        </h2>
-        <ol className="mt-5">
+      <section className="mx-auto max-w-7xl px-4 py-5">
+        <ol className="">
           {[
             { t: "여권/비자", d: "만료일 · ESTA/ETA · 비자 확인" },
             { t: "항공/수하물", d: "기내/위탁 · 리튬/액체 규정" },
@@ -217,8 +214,8 @@ export default function Home() {
               </p>
               <div className="mt-6">
                 <Link
-                  href="/builder"
-                  className="inline-flex items-center rounded-xl bg-sky-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-sky-700"
+                  href="/start"
+                  className="rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-sky-700"
                 >
                   체크리스트 만들기 →
                 </Link>

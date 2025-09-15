@@ -41,7 +41,7 @@ function isDSTNow(tz: string, now = new Date()): boolean {
   const janOff = offsetMinutes(tz, jan);
   const julOff = offsetMinutes(tz, jul);
   if (janOff === julOff) return false;           // DST 자체가 없는 타임존
-  const summerOff = Math.min(janOff, julOff);    // 우리 함수에서 ‘여름 오프셋’이 더 작음
+  const summerOff = Math.min(janOff, julOff);    // 우리 함수에서 '여름 오프셋'이 더 작음
   return cur === summerOff;                      // 현재가 여름 오프셋이면 DST 적용 중
 }
 

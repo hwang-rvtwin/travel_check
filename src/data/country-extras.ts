@@ -22,7 +22,7 @@ export const EXTRAS: Record<string, CountryExtra> = {
   AU: { tipping:'none', tapWater:'safe', payment:'card', emergency:{ general:'000' }, transportNote:'Opal(Myki/Go Card 등 지역별)' },
   NZ: { tipping:'none', tapWater:'safe', payment:'card', emergency:{ general:'111' }, transportNote:'AT HOP 등' },
   SG: { tipping:'service_included', tapWater:'safe', payment:'card', emergency:{ general:'999' }, transportNote:'EZ-Link/NETS' },
-  MY: { tipping:'optional', tapWater:'caution', payment:'mixed', emergency:{ general:'999' }, transportNote:'Touch ’n Go' },
+  MY: { tipping:'optional', tapWater:'caution', payment:'mixed', emergency:{ general:'999' }, transportNote:'Touch 'n Go' },
   VN: { tipping:'optional', tapWater:'unsafe', payment:'cash', emergency:{ general:'113' } },
   ID: { tipping:'optional', tapWater:'unsafe', payment:'cash', emergency:{ general:'112' } },
   TW: { tipping:'none', tapWater:'safe', payment:'card', emergency:{ general:'110', ambulance:'119' }, transportNote:'EasyCard/iPASS' },
