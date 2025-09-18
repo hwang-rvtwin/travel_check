@@ -42,7 +42,7 @@ export default function PackingQuickLinks({
   className?: string;
 }) {
   const slug = normalizeCountrySlug(countrySlug);
-  const sectionClass = ["mt-8", className].filter(Boolean).join(" ");
+  const sectionClass = ["mt-3 mb-3", className].filter(Boolean).join(" ");
 
   // 이번 달 + 다음 두 달
   const next3 = nextNMonthIndices(3).map((idx: number) => {
@@ -69,14 +69,14 @@ export default function PackingQuickLinks({
       <h2 className="text-lg font-semibold">월별 패킹 체크</h2>
 
       {/* 최근 3개월(= 현재/미래 3개월) */}
-      <div className="mt-3">
+      <div className="mt-5">
         <p className="text-sm text-gray-500">가까운 달 빠르게 보기</p>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div className="mt-2 flex flex-wrap gap-2 text-center">
           {next3.map((m) => (
             <Link
               key={m.slug}
               href={m.href}
-              className="rounded-lg border px-3 py-1 text-sm hover:bg-gray-50"
+              className="rounded-full px-4 py-4 text-sm shadow-sm hover:bg-sky-100 bg-sky-50 ring-1 ring-sky-100"
             >
               {m.label}
             </Link>
@@ -85,14 +85,14 @@ export default function PackingQuickLinks({
       </div>
 
       {/* 전체 월별 */}
-      <div className="mt-6">
+      <div className="mt-5">
         <p className="text-sm text-gray-500">전체 월별</p>
-        <div className="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-6">
+        <div className="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-6 text-center">
           {all.map((m) => (
             <Link
               key={m.slug}
               href={m.href}
-              className="rounded-lg border px-3 py-1 text-sm hover:bg-gray-50"
+              className="rounded-lg px-3 py-2 text-sm shadow-sm hover:bg-gray-50"
             >
               {m.label}
             </Link>

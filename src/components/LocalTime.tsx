@@ -65,7 +65,7 @@ export default function LocalTime({ tz }: { tz: string }) {
       <div>현지 시각: <b>{local}</b></div>
       <div>한국과 시차: <b>{pretty}</b></div>
       {/* DST 한 줄 안내 (추가) */}
-      <div className="text-xs text-gray-500">
+      <div className="text-xs text-sky-600 mt-2">
         {hasDST ? '서머타임 적용 기간' : '서머타임 미적용'}
       </div>
     </div>

@@ -30,7 +30,7 @@ export default function PackingIndexPage() {
         {/* Header */}
         <header className="mb-4 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
+            <h1 className="text-3xl font-bold tracking-tight">
               월별 패킹 가이드
             </h1>
             <p className="mt-2 text-sm text-slate-600">

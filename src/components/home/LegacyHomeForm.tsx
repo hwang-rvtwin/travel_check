@@ -514,21 +514,6 @@ export default function LegacyHomeForm() {
       setLoading(false);
     }
   }
-  function toggleCheck(id: string) {
-    if (!data) return;
-    const next = {
-      ...data,
-      checklist: data.checklist.map((it) =>
-        it.id === id ? { ...it, checked: !it.checked } : it
-      ),
-    };
-    setData(next);
-    const mapArr: [string, boolean][] = next.checklist.map((it) => [
-      it.id,
-      it.checked,
-    ]);
-    localStorage.setItem(storageKey, JSON.stringify(mapArr));
-  }
 
   /* ---------- 초기 쿼리 복원 ---------- */
   useEffect(() => {
@@ -570,13 +555,13 @@ export default function LegacyHomeForm() {
       </header>
 
       <div className="text-end">
-          <button
-            onClick={printPage}
-            className="rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-700"
-          >
-            인쇄 / PDF
-          </button>
-        </div>
+        <button
+          onClick={printPage}
+          className="rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-700"
+        >
+          인쇄 / PDF
+        </button>
+      </div>
 
       {/* 입력 영역 */}
       <section className="relative mt-5 rounded-2xl bg-sky-50 p-5 shadow-md backdrop-blur">
@@ -1063,8 +1048,9 @@ export default function LegacyHomeForm() {
               />
             </a>
           </div>
-          <p className="mt-2 text-xs text-slate-500">
-            * 일부 배너/링크는 제휴일 수 있습니다.
+          <p className="mt-2 text-xs text-slate-400">
+            * 이 배너/링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의
+            수수료를 제공받습니다.
           </p>
         </Section>
       )}
@@ -1100,43 +1086,15 @@ export default function LegacyHomeForm() {
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-xs text-slate-500">
-            * 일부 배너/링크는 제휴일 수 있습니다.
-          </p>
-        </Section>
-      )}
-
-      {/* 체크리스트 — 조회 후 자동 펼침 */}
-      {data && (
-        <Section
-          title="체크리스트"
-          icon={<span>✅</span>}
-          defaultOpen
-          openSignal={openTick}
-        >
-          <ul className="space-y-2">
-            {data.checklist.map((c) => (
-              <li key={c.id} className="flex items-center gap-3">
-                <input
-                  id={c.id}
-                  type="checkbox"
-                  checked={c.checked}
-                  onChange={() => toggleCheck(c.id)}
-                />
-                <label htmlFor={c.id} className="text-sm">
-                  {c.label}
-                </label>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 text-xs text-slate-500">
-            업데이트(국가 데이터): {data.updatedAt || "—"}
+          <p className="mt-2 text-xs text-slate-400">
+            * 이 배너/링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의
+            수수료를 제공받습니다.
           </p>
         </Section>
       )}
 
       {/* 면책 */}
-      <footer className="mt-14 rounded-2xl bg-gray-100 p-4 text-sm leading-6 text-slate-700 shadow-sm">
+      <footer className="mt-20 rounded-2xl bg-gray-100 p-4 text-sm leading-6 text-slate-700 shadow-sm">
         <div className="font-bold">신뢰 및 면책 고지</div>
         <ul className="list-disc pl-5">
           <li>

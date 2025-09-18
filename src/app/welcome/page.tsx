@@ -66,7 +66,7 @@ export default function Home() {
       {/* ===== 페이지 이동 버튼 ===== */}
       <section className="mx-auto max-w-7xl px-4 py-10 bg-sky-50/80">
         <h2 className="mb-5 text-lg font-semibold md:text-xl">체크 가이드</h2>
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-3">
           {[
             {
               title: "월별 패킹",
@@ -79,29 +79,6 @@ export default function Home() {
                     stroke="currentColor"
                     strokeWidth="1.5"
                     strokeLinecap="round"
-                  />
-                </svg>
-              ),
-            },
-            {
-              title: "수하물 반입 제한",
-              href: "/baggage",
-              desc: "리튬·액체·기내/위탁",
-              icon: (
-                <svg viewBox="0 0 24 24" className="size-5">
-                  <path
-                    d="M7 7V5a3 3 0 0 1 6 0v2"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <rect
-                    x="4"
-                    y="7"
-                    width="16"
-                    height="12"
-                    rx="3"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
                   />
                 </svg>
               ),

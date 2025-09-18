@@ -85,23 +85,15 @@ export default function DateField({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [min, max, value]);
 
-  // 바깥 클릭 / ESC 닫기
+  // ✅ ESC 키로만 닫기 (바깥 클릭은 Overlay가 처리)
   useEffect(() => {
     if (!open) return;
-    const onClick = (e: MouseEvent) => {
-      if (!wrapRef.current) return;
-      if (!wrapRef.current.contains(e.target as Node)) setOpen(false);
-    };
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
-    window.addEventListener('mousedown', onClick);
     window.addEventListener('keydown', onKey);
-    return () => {
-      window.removeEventListener('mousedown', onClick);
-      window.removeEventListener('keydown', onKey);
-    };
+    return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
-  const weeks = useMemo(() => buildCalendarGrid(display), [display]);
+  //const weeks = useMemo(() => buildCalendarGrid(display), [display]);
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const isDisabled = (d: Date) => (fromDate && d < fromDate) || (toDate && d > toDate);
@@ -121,8 +113,17 @@ export default function DateField({
     const top = Math.round(r.bottom + window.scrollY + 8); // 버튼 아래 + 간격
     setPos({ top, left, width });
   };
-
-  useEffect(() => { if (open) { updatePos(); const on = () => updatePos(); window.addEventListener('scroll', on, true); window.addEventListener('resize', on); return () => { window.removeEventListener('scroll', on, true); window.removeEventListener('resize', on); }; } }, [open]);
+  useEffect(() => {
+    if (!open) return;
+    updatePos();
+    const on = () => updatePos();
+    window.addEventListener('scroll', on, true);
+    window.addEventListener('resize', on);
+    return () => {
+      window.removeEventListener('scroll', on, true);
+      window.removeEventListener('resize', on);
+    };
+  }, [open]);
 
   return (
     <div className={`relative min-w-0 ${className}`} ref={wrapRef}>
@@ -143,12 +144,16 @@ export default function DateField({
       {/* 포털로 오버레이/팝업 렌더 → 항상 최상단 */}
       {open && createPortal(
         <>
-          {/* Overlay */}
-          <div className="fixed inset-0 z-[9997] bg-transparent" onClick={() => setOpen(false)} />
-          {/* Popup */}
+          {/* Overlay: 이 영역 클릭 시에만 닫힘 */}
+          <div
+            className="fixed inset-0 z-[9997] bg-transparent"
+            onMouseDown={() => setOpen(false)}
+          />
+          {/* Popup: 내부 클릭은 overlay로 전파 차단 → 날짜 선택 가능 */}
           <div
             className="absolute z-[9998]"
             style={{ position: 'absolute', top: pos.top, left: pos.left, width: pos.width }}
+            onMouseDown={(e) => e.stopPropagation()}
           >
             <div
               className="
@@ -199,8 +204,9 @@ export default function DateField({
 
               {/* 날짜 그리드 */}
               <div className="grid grid-cols-7 gap-y-2 mb-5">
-                {weeks.flat().map(({ date, outside }, i) => {
+                {buildCalendarGrid(display).flat().map(({ date, outside }, i) => {
                   const sel = isSameDay(date, selected);
+                  const today = new Date(); today.setHours(0, 0, 0, 0);
                   const isToday = isSameDay(date, today);
                   const disabled = isDisabled(date);
 
@@ -236,7 +242,7 @@ export default function DateField({
                 <div className="flex items-center gap-2 m-3">
                   <button
                     type="button"
-                    className="rounded-md px-2.5 py-2 text-xs hover:bg-slate-50 shadow-md"
+                    className="rounded-md px-2.5 py-1 text-xs hover:bg-slate-50 shadow-md"
                     onClick={() => {
                       const t = clampDate(new Date(), fromDate, toDate);
                       onChange(toISODate(t)); setOpen(false); setDisplay(t);
@@ -246,14 +252,14 @@ export default function DateField({
                   </button>
                   <button
                     type="button"
-                    className="rounded-md px-2.5 py-2 text-xs hover:bg-slate-50 shadow-md"
+                    className="rounded-md px-2.5 py-1 text-xs hover:bg-slate-50 shadow-md"
                     onClick={() => onChange('')}
                   >
                     지움
                   </button>
                   <button
                     type="button"
-                    className="rounded-md px-2.5 py-2 text-xs shadow-md bg-black text-white hover:bg-slate-800"
+                    className="rounded-md px-2.5 py-1 text-xs shadow-md bg-black text-white hover:bg-slate-800"
                     onClick={() => setOpen(false)}
                   >
                     닫기
