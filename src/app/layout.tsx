@@ -1,31 +1,27 @@
-// src/app/layout.tsx
-// Server Component
 import type { Metadata } from "next";
-
-// ✅ 전역 CSS (프로젝트 공통)
 import "./globals.css";
-
-import Nav from "../components/layout/Nav";
-import Footer from "../components/layout/Footer";
+import Nav from "@/components/layout/Nav";
+import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://rvtwin.com"),
-  title: {
-    default: "출국 체크허브 | 여행 전 필수 체크 한 번에",
-    template: "%s | 출국 체크허브",
-  },
-  description:
-    "비자·전원 플러그·패킹·eSIM을 한 곳에서. 신뢰 가능한 출처와 PDF 내보내기 지원.",
-  alternates: { canonical: "/" },
-  openGraph: { type: "website", url: "https://rvtwin.com" },
+  title: "출국 체크허브",
+  description: "여행 전 꼭 필요한 체크를 한 번에",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="ko" className="scroll-smooth">
-      <body className="min-h-screen bg-white text-gray-900 antialiased">
+    <html lang="ko">
+      {/* ✅ 세로 플렉스 컨테이너 + 전체 높이 확보 */}
+      <body className="min-h-screen flex flex-col bg-white text-slate-900">
         <Nav />
-        <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{children}</main>
+
+        {/* ✅ 본문이 남는 공간을 채우도록 해서 Footer를 아래로 밀어냄 */}
+        <main className="flex-1">{children}</main>
+
         <Footer />
       </body>
     </html>
