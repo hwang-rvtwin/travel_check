@@ -59,7 +59,7 @@ export default function Home() {
           </div>
 
           {/* FlightPlan Card */}
-          <div className="overflow-hidden rounded-3xl bg-white/75 shadow-lg">
+          <div className="overflow-hidden rounded-3xl bg-white/75 shadow-lg mb-28">
             <div className="flex items-center  justify-between border-b px-5 pt-5 py-3 text-xs text-slate-300 ">
               <div className="inline-flex items-center gap-2 font-medium text-slate-500">
                 <span className="inline-flex size-6 items-center justify-center rounded-full bg-sky-100 ">
@@ -71,7 +71,7 @@ export default function Home() {
             </div>
 
             {/* simple route + items */}
-            <div className="grid gap-0 md:grid-cols-[1fr,1px,1fr] bg-gradient-to-t to-white via-white/80 from-sky-50 ">
+            <div className="grid gap-0 md:grid-cols-[1fr,1px,1fr] bg-gradient-to-t to-white via-white/80 from-sky-50">
               {/* route */}
               <div className="px-10 pb-10 pt-5">
                 <div className="text-[11px] uppercase tracking-wide text-slate-500">

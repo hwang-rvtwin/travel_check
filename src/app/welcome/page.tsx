@@ -191,7 +191,7 @@ export default function Home() {
               </p>
               <div className="mt-6">
                 <Link
-                  href="/start"
+                  href="/packing"
                   className="rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-sky-700"
                 >
                   체크리스트 만들기 →
