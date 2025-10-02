@@ -18,6 +18,21 @@ export interface CountryMeta {
 }
 
 export const COUNTRIES: CountryMeta[] = [
+    {
+    slug: "south-korea",
+    nameKo: "대한민국",
+    nameEn: "South Korea",
+    iso2: "KR",                   // ISO 3166-1 alpha-2
+    voltage: 220,                 // 한국 220V
+    frequency: 60,                // 60Hz
+    plugTypes: ["F", "C"],        // F형(주류), C형(호환)
+    visaNoteKo:
+      "대부분 단기 무비자 또는 상호주의·K-ETA 대상 국가 있음. 방문 전 최신 입국 요건 확인 권장.",
+    esimNote:
+      "공항/도심에서 eSIM·USIM 구입 가능. 주요 통신사(SKT/KT/LGU+) eSIM 지원 확대.",
+    climateNote:
+      "사계절 뚜렷: 봄·가을 온화, 여름 무덥고 장마, 겨울 한랭·건조. 지역별(남부/내륙/동해안) 편차 존재."
+  },
   {
     slug: "japan",
     nameKo: "일본",

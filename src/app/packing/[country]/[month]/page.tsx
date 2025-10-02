@@ -29,6 +29,18 @@ export function generateStaticParams() {
   );
 }
 
+/* ---------- ✅ 상세페이지 슬러그 보정(별칭 → 실제) ---------- */
+const DESTINATION_SLUG_ALIAS: Record<string, string> = {
+  kr: "south-korea",
+  korea: "south-korea",
+  "republic-of-korea": "south-korea",
+  // 필요 시 다른 예외도 여기에 추가
+};
+function destinationPath(slug: string) {
+  const fixed = DESTINATION_SLUG_ALIAS[slug] ?? slug;
+  return `/destinations/${fixed}`;
+}
+
 export async function generateMetadata(props: {
   params: Promise<{ country: string; month: string }>;
 }): Promise<Metadata> {
@@ -49,6 +61,8 @@ export async function generateMetadata(props: {
     openGraph: { title, description: desc, type: "article", url: canonical },
   };
 }
+
+
 
 /* ------------------------- 비복장 키워드 필터링 ------------------------- */
 const EXCLUDE_NON_CLOTHING = [
@@ -223,7 +237,7 @@ export default async function Page(props: {
       <section className="mt-8 grid gap-3 md:grid-cols-2">
         <a
           className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-sky-300 hover:text-sky-700 hover:bg-sky-50"
-          href={`/destinations/${country.slug}`}
+          href={destinationPath(country.slug)} 
         >
           <Svg icon="arrow" className="h-4 w-4" />
           해당 국가 상세로 이동
@@ -468,9 +482,10 @@ function Svg({ icon, className }: { icon: IconKey; className?: string }) {
             strokeWidth="1.6"
           />
           <path
-            d="M12 2v3M12 19v3M2 12h3M19 12h3M4.5 4.5l2 2M17.5 17.5l2 2M4.5 19.5l2-2M17.5 6.5l2-2"
+            d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
             stroke="currentColor"
             strokeWidth="1.6"
+            strokeLinecap="round"
           />
         </svg>
       );

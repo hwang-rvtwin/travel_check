@@ -25,7 +25,7 @@ export interface CountryMeta {
 
 export const COUNTRIES: CountryMeta[] = [
   {
-    iso2: "KR", slug: "korea", nameKo: "대한민국", flag: "🇰🇷", tz: "Asia/Seoul",
+    iso2: "KR", slug: "south-korea", nameKo: "대한민국", flag: "🇰🇷", tz: "Asia/Seoul",
     lat: 37.5665, lon: 126.9780, climate: "temperate",
     seasonTagByMonth: { 1:"비수기",2:"비수기",3:"평년",4:"평년",5:"성수기",6:"평년",7:"성수기",8:"성수기",9:"평년",10:"성수기",11:"평년",12:"비수기" }
   },

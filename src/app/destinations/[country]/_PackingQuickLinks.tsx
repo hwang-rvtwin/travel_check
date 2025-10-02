@@ -2,8 +2,14 @@
 import Link from "next/link";
 import { MONTH_SLUGS, type MonthSlug } from "@/lib/countries";
 
-// destinaton → packing 슬러그 보정
+/** destinaton → packing 슬러그 보정 (별칭 → 실제 라우트 슬러그) */
 const ALIAS: Record<string, string> = {
+  // ✅ 대한민국 별칭들
+  kr: "south-korea",
+  korea: "south-korea",
+  "republic-of-korea": "south-korea",
+
+  // (예: 기존에 쓰던 예외들)
   uae: "united-arab-emirates",
   "united arab emirates": "united-arab-emirates",
   usa: "united-states",
@@ -14,23 +20,21 @@ const ALIAS: Record<string, string> = {
   nz: "new-zealand",
   newzealand: "new-zealand",
 };
-function normalizeCountrySlug(s: string) {
-  const k = s.trim().toLowerCase();
+
+/** 넘어온 국가 슬러그를 표준 슬러그로 치환 */
+function normalizeCountrySlug(s: string): string {
+  const k = (s ?? "").trim().toLowerCase();
   return ALIAS[k] ?? k;
 }
 
-// 라벨
 const MONTH_LABELS_KO: readonly string[] = Array.from(
   { length: 12 },
   (_, i) => `${i + 1}월`,
 );
 
-// 이번 달부터 n개월 인덱스(미래 방향)
 function nextNMonthIndices(n: number, base = new Date()): number[] {
   const out: number[] = [];
-  for (let i = 0; i < n; i++) {
-    out.push((base.getMonth() + i) % 12); // 0..11
-  }
+  for (let i = 0; i < n; i++) out.push((base.getMonth() + i) % 12);
   return out;
 }
 
@@ -41,34 +45,32 @@ export default function PackingQuickLinks({
   countrySlug: string;
   className?: string;
 }) {
+  // ✅ 여기서 표준화
   const slug = normalizeCountrySlug(countrySlug);
   const sectionClass = ["mt-3 mb-3", className].filter(Boolean).join(" ");
 
-  // 이번 달 + 다음 두 달
-  const next3 = nextNMonthIndices(3).map((idx: number) => {
+  const next3 = nextNMonthIndices(3).map((idx) => {
     const m = MONTH_SLUGS[idx] as MonthSlug;
     return {
       idx,
-      label: MONTH_LABELS_KO[idx],
+      label: MONTH_LABELS_KO[idx]!,
       slug: m,
-      href: `/packing/${slug}/${m}`,
+      href: `/packing/${slug}/${m}`, // ← 표준화된 slug 사용
     };
   });
 
-  // 전체 12개월
-  const all = MONTH_SLUGS.map((m: MonthSlug, idx: number) => ({
+  const all = MONTH_SLUGS.map((m, idx) => ({
     idx,
     label: MONTH_LABELS_KO[idx]!,
     slug: m,
-    href: `/packing/${slug}/${m}`,
+    href: `/packing/${slug}/${m}`, // ← 표준화된 slug 사용
   }));
 
   return (
     <section className={sectionClass}>
-      {/* 메인 타이틀만 굵게 */}
       <h2 className="text-lg font-semibold">월별 패킹 체크</h2>
 
-      {/* 최근 3개월(= 현재/미래 3개월) */}
+      {/* 가까운 달 빠르게 보기 */}
       <div className="mt-5">
         <p className="text-sm text-gray-500">가까운 달 빠르게 보기</p>
         <div className="mt-2 flex flex-wrap gap-2 text-center">
